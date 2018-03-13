@@ -1,0 +1,6 @@
+{
+  "name": "egg-md5",
+  "eggPlugin": {
+    "name": "md5"
+  }
+}
