@@ -1,14 +1,17 @@
 'use strict';
 const Service = require('egg').Service;
 class TokenService extends Service {
-    async updateAccessToken(vaule, key) {
+    constructor(ctx) {
+        super(ctx);
+    }
+    async updateAccessToken(valueID, key) {
+        const { app, ctx } = this;
+        const conn = await app.mysql.beginTransaction();
         try {
-            const { app, ctx } = this;
-            const conn = await app.mysql.beginTransaction();
             const time = (new Date()).getTime();
-            const accessToken = app.createAccessToken(value, key, true);
+            const accessToken = app.createAccessToken(valueID, key, true);
             const sql = "update user_verify set userUpdateAt=?,userAccessToken=? where userID=?";
-            const succ = await conn.query(sql, [time, accessToken, _userID]);
+            const succ = await conn.query(sql, [time, accessToken, valueID]);
             await conn.commit();
             if (succ.affectedRows !== 1) {
                 throw app.config.status.ERROR_TOKEN_HANDLE
@@ -19,6 +22,7 @@ class TokenService extends Service {
             throw err;
         }
     }
+    //内部函数
     async _isTokenUsable(token) {
         try {
             const { app, ctx } = this;
@@ -37,6 +41,7 @@ class TokenService extends Service {
             throw app.config.status.ERROR_TOKEN_QUERY;
         }
     }
+    //外部通用调用
     async isTokenUsable() {
         try {
             let token = this.getAccessToken();
@@ -47,7 +52,7 @@ class TokenService extends Service {
                 }
                 return token;
             }
-           return false;
+            return false;
         } catch (err) {
             throw err;
         }
@@ -60,9 +65,10 @@ class TokenService extends Service {
             signed: true
         });
     }
-    async setAccessToken(value, key) {
+    async setAccessToken(valueID, key) {
+        const { ctx } = this;
         try {
-            const _token = await this.updateAccessToken(value, key)
+            const _token = await this.updateAccessToken(valueID, key)
             ctx.cookies.set('accessToken', _token, {
                 httpOnly: true,
                 encrypt: true,
@@ -71,6 +77,13 @@ class TokenService extends Service {
         } catch (err) {
             throw err;
         }
+    }
+    //测试用
+    async demoGetAccessToken(){
+        const {app,ctx}=this;
+           return  await app.mysql.select('user_verify', {
+            where:{userID:10010}
+           });
     }
 };
 module.exports = TokenService;

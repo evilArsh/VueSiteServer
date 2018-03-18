@@ -13,21 +13,22 @@ module.exports = appInfo => {
     jsonLimit: '1mb',
     formLimit: '1mb',
   };
-  config.mysql = {
-    // mysql config
-    client: {
-      host: '',
-      port: '',
-      user: '',
-      password: '',
-      database: '',
-    },
-    // 是否加载到 app 上，默认开启
-    app: true,
-    // 是否加载到 agent 上，默认关闭
-    agent: false,
-  };
+  // config.mysql = {
+  //   // mysql config
+  //   client: {
+  //     host: '',
+  //     port: '',
+  //     user: '',
+  //     password: '',
+  //     database: '',
+  //   },
+  //   // 是否加载到 app 上，默认开启
+  //   app: true,
+  //   // 是否加载到 agent 上，默认关闭
+  //   agent: false,
+  // };
 
+//跨站白名单
   // session && cookie, (havn't been used)
   config.security = {
     csrf: {
@@ -35,9 +36,15 @@ module.exports = appInfo => {
       cookieName: '_csrf', // Cookie 中的字段名，默认为 csrfToken
       sessionName: '_csrf', // Session 中的字段名，默认为 csrfToken
       headerName: 'x-csrf-token',
-      ignoreJSON:true
+      ignoreJSON:false
     },
+    domainWhiteList:['http://localhost:8080','http://localhost:80']
   };
+  exports.cors = {
+  //{string|Function} origin: '*',
+  //{string|Array} allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH'
+  credentials:true
+};
   // Nginx反向代理
   config.proxy = true;
   // JSONP CSRF验证

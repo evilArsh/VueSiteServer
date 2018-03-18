@@ -7,5 +7,7 @@ module.exports = app => {
     // const jsonp=app.jsonp();
     const { router, controller } = app;
     router.resources('user', '/api/user', controller.user);
+    router.resources('signIn', '/api/signIn', controller.signIn);
+    router.resources('signUp', '/api/signUp', controller.signUp)
     router.resources('blog', '/api/blog', controller.blog);
 };

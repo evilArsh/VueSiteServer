@@ -14,11 +14,11 @@ class UserService extends Service {
             return false;
         }
     }
-    async create(data) {
+    async register(data) {
         const { ctx, app } = this;
         // const conn = await app.mysql.beginTransaction();
         let result = {};
-        const timeO = (new Date()).getTime();
+        const timeO = new Date();
         const time = ctx.helper.dateFormate('yyyy-MM-dd hh:mm:ss', timeO);
         try {
             let r = await this.isUserNone(data.userMail);
@@ -29,7 +29,7 @@ class UserService extends Service {
                 userMail: data.userMail,
                 userPassword: data.userPassword,
                 userCreateAt: time,
-                userUpdateAt: timeO,
+                userUpdateAt: timeO.getTime(),
             });
             if (results.affectedRows === 1) {
                 result = ctx.helper.successUserCreate();
@@ -69,7 +69,7 @@ class UserService extends Service {
                     where: { userID: results[0].userID },
                     columns: ['userNickName', 'userAvatar']
                 });
-                await ctx.sevice.token.setAccessToken(results[0].userID, new Date().getTime());
+                await ctx.service.token.setAccessToken(results[0].userID, new Date().getTime());
                 ctx.rotateCsrfSecret();
                 //更换成返回用户信息 ------------------------
                 result = ctx.helper.successHandle(info[0]);
