@@ -22,8 +22,18 @@ class UserController extends Controller {
             ctx.helper.xssFilter(ctx.request.body);
             ctx.body = await ctx.service.user.getOwnInfo(ctx.params.id, ctx.request.body);
         } catch (err) {
-            ctx.status = 400;
             ctx.body = ctx.helper.errorUserInfo();
+        }
+    }
+    //注销登录
+    async destroy(){
+        const{ctx}=this;
+        try{
+            ctx.body=await ctx.service.user.loginOut();
+        }catch(err){
+            console.log(err);
+            
+            ctx.helper.errorUserLoginOut();
         }
     }
 }

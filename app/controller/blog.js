@@ -26,7 +26,6 @@ class BlogController extends Controller {
                 ctx.body = ctx.helper.errorBlogContentParam();
                 return;
             }
-            ctx.status = 400;
             ctx.body = ctx.helper.errorBlogContent();
         }
         //ctx.body='index method';
@@ -45,7 +44,6 @@ class BlogController extends Controller {
                 ctx.body = ctx.helper.errorBlogContentParam();
                 return;
             }
-            ctx.status = 400;
             ctx.body = ctx.helper.errorBlogContent();
         }
     }

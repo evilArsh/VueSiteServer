@@ -13,21 +13,20 @@ module.exports = appInfo => {
     jsonLimit: '1mb',
     formLimit: '1mb',
   };
-  // config.mysql = {
-  //   // mysql config
-  //   client: {
-  //     host: '',
-  //     port: '',
-  //     user: '',
-  //     password: '',
-  //     database: '',
-  //   },
-  //   // 是否加载到 app 上，默认开启
-  //   app: true,
-  //   // 是否加载到 agent 上，默认关闭
-  //   agent: false,
-  // };
-
+  config.mysql = {
+    // mysql config
+    client: {
+      host: 'localhost',
+      port: '3306',
+      user: 'root',
+      password: 'wxl199657',
+      database: 'web',
+    },
+    // 是否加载到 app 上，默认开启
+    app: true,
+    // 是否加载到 agent 上，默认关闭
+    agent: true,
+  };
 //跨站白名单
   // session && cookie, (havn't been used)
   config.security = {
@@ -38,7 +37,7 @@ module.exports = appInfo => {
       headerName: 'x-csrf-token',
       ignoreJSON:false
     },
-    domainWhiteList:['http://localhost:8080','http://localhost:80']
+    domainWhiteList: ['http://localhost:8080', 'http://localhost', 'http://localhost:80', 'http://182.98.133.215']
   };
   exports.cors = {
   //{string|Function} origin: '*',
@@ -64,11 +63,16 @@ module.exports = appInfo => {
   config.info = {
     SUCCESS_USER_CREATE: '用户注册成功',
     SUCCESS_USER_LOGIN: '用户登录成功',
+    SUCCESS_USER_INFO: '获取用户数据成功',
+    SUCCESS_USER_BLOGCONTENT: '获取用户博客数据成功',
+    SUCCESS_DEF_BLOGCONTENT:'获取博客数据成功',
     ERROR_MAIL_FORMATE: '邮箱格式不正确',
     ERROR_USER_CREATE: '用户注册失败',
     ERROR_USER_LOGIN: '用户名或密码错误',
     ERROR_USER_RELOGIN: '该用户已经登录',
     ERROR_USER_REGISTER: '此账号已被注册',
+    ERROR_USER_LOGINOUT: '注销失败',
+    SUCCESS_USER_LOGINOUT:'注销成功',
     ERROR_USER_FORMATE: '非法的用户名或密码',
     ERROR_USER_IDENTIFY:'用户身份已过期,请重新登录',
     ERROR_USER_INFO:'获取用户资料失败',
@@ -77,7 +81,11 @@ module.exports = appInfo => {
     ERROR_BLOG_CONTENT:'获取博客数据失败',
     //the error in handling database
     //WARNNING ! MUST CHANGE CONTENT WHEN IT IN PRODUCING ENV
-    ERROR_DB_HANDLE:'数据库操作失败'
+    ERROR_DB_HANDLE:'数据库操作失败',
+    ERROR_TOKEN_VERIFY: 'accessToken已失效',
+    SUCCESS_TOKEN_VERIFY:'accessToken有效',
+    ERROR_TOKEN_REQUIRE: '获取accessToken失败',
+    SUCCESS_TOKEN_SET:'accessToken已发放',
   };
   return config;
 };

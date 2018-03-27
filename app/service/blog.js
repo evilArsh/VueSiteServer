@@ -4,6 +4,7 @@ class BlogService extends Service {
     constructor(ctx) {
         super(ctx);
     }
+    //获取所有博客数据
     async getDefBlogContent(data) {
         const { ctx, app } = this;
         try {
@@ -17,11 +18,12 @@ class BlogService extends Service {
                 limit: number,
                 offset: queryAfter
             });
-            return ctx.helper.successHandle(result);
+            return ctx.helper.successDefBlog(result);
         } catch (err) {
             throw err;
         }
     }
+    //获取指定用户数据
     async getUsrBlogContent(usr, data) {
         const { ctx ,app} = this;
         try {
@@ -35,7 +37,7 @@ class BlogService extends Service {
                 limit: number,
                 offset: queryAfter
             });
-            return ctx.helper.successHandle(result);
+            return ctx.helper.successUserBlog(result);
         } catch (err) {
             // console.log(err)
             throw err;

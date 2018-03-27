@@ -50,6 +50,9 @@ module.exports = {
         if (isNaN(parseInt(old)) ||isNaN( parseInt(news))) {
             return false;
         }
+        console.log('old:' + old);
+        console.log('news:' + news);
+        console.log('time:' + time);
         return news - old >= this.app.config.tokenDelay ? true : false;
     },
     //对请求部分数据时body中所带的参数进行处理
@@ -65,6 +68,46 @@ module.exports = {
         }
         return { queryAfter, number };
     },
+    successUserLogin(info) {
+        return {
+            success: true,
+            status: "001D",
+            data: this.app.config.info.SUCCESS_USER_LOGIN,
+            package: info
+        }
+    },
+    successUserInfo(info){
+        return{
+            success:true,
+            status:'002D',
+            data: this.app.config.info.SUCCESS_USER_INFO,
+            package:info
+        }
+    },
+    successUserBlog(info) {
+        return {
+            success: true,
+            status: '003D',
+            data: this.app.config.info.SUCCESS_USER_BLOGCONTENT,
+            package: info
+        }
+    },
+    successDefBlog(info) {
+        return {
+            success: true,
+            status: '004D',
+            data: this.app.config.info.SUCCESS_DEF_BLOGCONTENT,
+            package: info
+        }
+    },
+    successTokenSet(info){
+        return{
+            success: true,
+            status: "005D",
+            data: this.app.config.info.SUCCESS_TOKEN_SET,
+            package:info
+        }
+    },
     successUserCreate() {
         return {
             success: true,
@@ -72,12 +115,12 @@ module.exports = {
             data: this.app.config.info.SUCCESS_USER_CREATE
         }
     },
-    successHandle(info){
-      return{
-        success:true,
-        status:"002",
-        data:info
-      }
+    errorTokenRequire(){
+        return {
+            success: false,
+            status: "002",
+            data: this.app.config.info.SUCCESS_TOKEN_SET
+        }
     },
     errorMailFormate() {
         return {
@@ -155,5 +198,33 @@ module.exports = {
         status:"013",
         data:this.app.config.info.ERROR_USER_INFO
       }
+    },
+    errorTokenVerify() {
+        return {
+            success: false,
+            status: "014",
+            data: this.app.config.info.ERROR_TOKEN_VERIFY
+        }
+    },
+    successTokenVerify(){
+        return {
+            success: true,
+            status: "015",
+            data: this.app.config.info.SUCCESS_TOKEN_VERIFY
+        }
+    },
+    successUserLoginOut(){
+        return {
+            success:true,
+            status:'016',
+            data:this.app.config.info.SUCCESS_USER_LOGINOUT
+        }
+    },
+    errorUserLoginOut(){
+        return {
+            success: false,
+            status: '017',
+            data: this.app.config.info.ERROR_USER_LOGINOUT
+        }
     }
 };

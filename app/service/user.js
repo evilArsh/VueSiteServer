@@ -2,11 +2,15 @@
 const Service = require('egg').Service;
 class UserService extends Service {
     async isUserNone(usrName) {
-        const { app } = this;
+        const {
+            app
+        } = this;
         try {
             //judge whether user name has been registered
             let result = await app.mysql.select('user_verify', {
-                where: { userMail: usrName },
+                where: {
+                    userMail: usrName
+                },
                 columns: ['userMail']
             });
             return result.length === 0 ? true : false;
@@ -15,7 +19,10 @@ class UserService extends Service {
         }
     }
     async register(data) {
-        const { ctx, app } = this;
+        const {
+            ctx,
+            app
+        } = this;
         // const conn = await app.mysql.beginTransaction();
         let result = {};
         const timeO = new Date();
@@ -25,13 +32,18 @@ class UserService extends Service {
             if (!r) {
                 return ctx.helper.errorUserRegister();
             }
+
             const results = await app.mysql.insert('user_verify', {
                 userMail: data.userMail,
                 userPassword: data.userPassword,
                 userCreateAt: time,
                 userUpdateAt: timeO.getTime(),
+                userNickName:'未设置昵称用户'
             });
             if (results.affectedRows === 1) {
+                //cm
+                await ctx.service.cm.setIdentify(data);
+                //
                 result = ctx.helper.successUserCreate();
                 // 是否创建accessToken
             } else {
@@ -39,56 +51,94 @@ class UserService extends Service {
             }
             return result;
         } catch (err) {
-           throw err;
+            throw err;
         }
     }
     async login(data) {
-        const { ctx, app } = this;
+        const {
+            ctx,
+            app
+        } = this;
         let result = {};
         //数据库返回的结果
         let results = {};
         try {
             const token = ctx.service.token.getAccessToken();
-            // 处理反复登录,登录的时候不应该有token,第一次登录会分配一个无法用js删除的token,
-            // 即使被删除也只能手动删除,可以避免while(1)式恶意登录
-            // 前端考虑加验证码之类的东西
-            if (token !== undefined) {
-                return ctx.helper.errorUserReLogin();
-            }
             // the select function returns  an array like this [{},{}]
             results = await app.mysql.select('user_verify', {
-                where: { userMail: data.userMail, userPassword: data.userPassword },
-                columns: ['userID', 'userMail', 'userPassword']
+                where: {
+                    userMail: data.userMail,
+                    userPassword: data.userPassword
+                },
+                columns: ['userID', 'userMail', 'userPassword', 'userAccessToken','userNickName','userAvatar','userIsAdmin'/*cm*/]
             });
+            console.log('login service:' + JSON.stringify(results));
             // 用户名或密码错误
             // 加个Logger
             if (results.length !== 1) {
                 result = ctx.helper.errorUserLogin();
             } else {
-                let info = await app.mysql.select('user_info', {
-                    where: { userID: results[0].userID },
-                    columns: ['userNickName', 'userAvatar']
-                });
-                await ctx.service.token.setAccessToken(results[0].userID, new Date().getTime());
+                if (token !== undefined && token === results[0].userAccessToken) {
+                    let q = await ctx.service.token.isTokenUsable(results[0].userAccessToken);
+                    if (q) {
+                        return ctx.helper.errorUserReLogin();
+                    }
+                }
                 ctx.rotateCsrfSecret();
-                //更换成返回用户信息 ------------------------
-                result = ctx.helper.successHandle(info[0]);
+                //cm
+                let admin = results[0].userIsAdmin;
+                let _admin;
+                if (admin === "Y") { _admin = true; } else { _admin=false;}
+                let info={
+                    userNickName: results[0].userNickName,
+                    userAvatar: results[0].userAvatar,
+                    admin: _admin
+                };
+                //origional 
+                await ctx.service.token.setAccessToken(results[0].userID, new Date().getTime());
+                
+                result = ctx.helper.successUserLogin(info);
+                //origional 
+                // result = ctx.helper.successUserLogin(info[0]);
             }
             return result;
         } catch (err) {
             throw err;
         }
     }
-    async getOwnInfo(id,queryAndNumber){
-        const { ctx, app } = this;
-        try{
-            let { queryAfter, number } = ctx.helper.reqParamSet(queryAndNumber);
-            let sql=`SELECT a.userNickName,a.userAvatar,b.blog_id,b.blog_type,b.blog_title,b.blog_time from user_info as a,user_blog as b where a.userID=b.userID AND a.userID=${id} ORDER BY b.blog_id DESC LIMIT ${queryAfter},${number} `;
+    //注销
+    async loginOut() {
+        //只对在有效期内的token进行注销
+        const {
+            ctx,
+            app
+        } = this;
+        try {
+            let usable = await ctx.service.token.isTokenUsable();
+            if (usable) {
+                let isDead = await ctx.service.token.destroyAccessToken();
+                if (isDead) return ctx.helper.successUserLoginOut();
+            }
+            return ctx.helper.errorUserLoginOut();
+        } catch (err) {
+            throw err;
+        }
+    }
+    async getOwnInfo(id, queryAndNumber) {
+        const {
+            ctx,
+            app
+        } = this;
+        try {
+            let {
+                queryAfter,
+                number
+            } = ctx.helper.reqParamSet(queryAndNumber);
+            let sql = `SELECT a.userNickName,a.userAvatar,b.blog_id,b.blog_type,b.blog_title,b.blog_time from user_info as a,user_blog as b where a.userID=b.userID AND a.userID=${id} ORDER BY b.blog_id DESC LIMIT ${queryAfter},${number} `;
             app.mysql.escape(sql);
-            console.log(sql);
-            const result=await app.mysql.query(sql);
-            return ctx.helper.successHandle(result);
-        }catch(err){
+            const result = await app.mysql.query(sql);
+            return ctx.helper.successUserInfo(result);
+        } catch (err) {
             throw err;
         }
     }

@@ -23,7 +23,6 @@ class SignUpController extends Controller {
                 return;
             }
             console.log(err)
-            ctx.status = 400;
             // 邮箱格式不对
             if (err === this.app.config.status.ERROR_MAIL_FORMATE) {
                 ctx.body = ctx.helper.errorMailFormate();
