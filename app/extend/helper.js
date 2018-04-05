@@ -2,6 +2,7 @@
 module.exports = {
     // 格式化时间
     // author  from internet
+    //yyyy-MM-dd hh:mm:ss
     dateFormate(fmt, date) {
         const o = {
             'M+': date.getMonth() + 1,
@@ -50,9 +51,6 @@ module.exports = {
         if (isNaN(parseInt(old)) ||isNaN( parseInt(news))) {
             return false;
         }
-        console.log('old:' + old);
-        console.log('news:' + news);
-        console.log('time:' + time);
         return news - old >= this.app.config.tokenDelay ? true : false;
     },
     //对请求部分数据时body中所带的参数进行处理

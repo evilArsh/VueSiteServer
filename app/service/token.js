@@ -84,7 +84,6 @@ class TokenService extends Service {
             app
         } = this;
         let token = this.getAccessToken();
-        console.log('(app.config.tokenDelay) * 2:' + (app.config.tokenDelay) * 2);
         let time = new Date().getTime() - (app.config.tokenDelay) * 2;
         try {
             let result = await app.mysql.update('user_verify', {

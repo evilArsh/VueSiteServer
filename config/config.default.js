@@ -37,7 +37,7 @@ module.exports = appInfo => {
       headerName: 'x-csrf-token',
       ignoreJSON:false
     },
-    domainWhiteList: ['http://localhost:8080', 'http://localhost', 'http://localhost:80', 'http://182.98.133.215']
+    domainWhiteList: ['http://localhost:8080', 'http://localhost', 'http://localhost:80', 'http://127.0.0.1']
   };
   exports.cors = {
   //{string|Function} origin: '*',
