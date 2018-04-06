@@ -41,8 +41,6 @@ class UserService extends Service {
                 userNickName:'未设置昵称用户'
             });
             if (results.affectedRows === 1) {
-                //cm
-                await ctx.service.cm.setIdentify(data);
                 //
                 result = ctx.helper.successUserCreate();
                 // 是否创建accessToken
@@ -70,9 +68,9 @@ class UserService extends Service {
                     userMail: data.userMail,
                     userPassword: data.userPassword
                 },
-                columns: ['userID', 'userMail', 'userPassword', 'userAccessToken','userNickName','userAvatar','userIsAdmin'/*cm*/]
+                columns: ['userID', 'userMail', 'userPassword', 'userAccessToken','userNickName','userAvatar']
             });
-            console.log('login service:' + JSON.stringify(results));
+            // console.log('login service:' + JSON.stringify(results));
             // 用户名或密码错误
             // 加个Logger
             if (results.length !== 1) {
@@ -85,19 +83,14 @@ class UserService extends Service {
                     }
                 }
                 ctx.rotateCsrfSecret();
-                //cm
-                let admin = results[0].userIsAdmin;
-                let _admin;
-                if (admin === "Y") { _admin = true; } else { _admin=false;}
-                let info={
-                    userNickName: results[0].userNickName,
-                    userAvatar: results[0].userAvatar,
-                    admin: _admin
-                };
-                //origional 
+                //改成把token 当作数据返回(没有这样做)
                 await ctx.service.token.setAccessToken(results[0].userID, new Date().getTime());
                 
-                result = ctx.helper.successUserLogin(info);
+                result = ctx.helper.successUserLogin({
+                    userNickName:results[0].userNickName,
+                    userAvatar:results[0].userAvatar,
+                    userMail:results[0].userMail
+                });
                 //origional 
                 // result = ctx.helper.successUserLogin(info[0]);
             }
