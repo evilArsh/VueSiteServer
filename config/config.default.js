@@ -80,7 +80,7 @@ module.exports = appInfo => {
     ERROR_BLOG_CONTENTPARAM:'access_token验证失败',
     ERROR_BLOG_CONTENT:'获取博客数据失败',
     //the error in handling database
-    //WARNNING ! MUST CHANGE CONTENT WHEN IT IN PRODUCING ENV
+    //WARNING ! MUST CHANGE CONTENT WHEN IT IN PRODUCING ENV
     ERROR_DB_HANDLE:'数据库操作失败',
     ERROR_TOKEN_VERIFY: 'accessToken已失效',
     SUCCESS_TOKEN_VERIFY:'accessToken有效',
