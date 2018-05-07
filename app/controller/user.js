@@ -4,8 +4,10 @@ class UserController extends Controller {
     constructor(ctx) {
         super(ctx);
         this.userInfoRule = {
-            queryAfter: { type: 'number', required: false },
-            number: { type: 'number', required: false }
+            id:{type:'number',required:true}
+        }
+        this.updateRule = {
+            userNickName:{type:'string',required:false}
         }
     }
     async index() {
@@ -15,12 +17,11 @@ class UserController extends Controller {
     //个人数据
     async show() {
         const { ctx, app } = this;
-        //---del 博客列表
         try {
-            ctx.validate(this.userInfoRule);
+            ctx.helper.toNumber(ctx.params);
+            ctx.validate(this.userInfoRule,ctx.params);
             ctx.helper.xssFilter(ctx.params);
-            ctx.helper.xssFilter(ctx.request.body);
-            ctx.body = await ctx.service.user.getOwnInfo(ctx.params.id, ctx.request.body);
+            ctx.body = await ctx.service.user.getOwnInfo(ctx.params.id);
         } catch (err) {
             ctx.body = ctx.helper.errorUserInfo();
         }
@@ -29,11 +30,28 @@ class UserController extends Controller {
     async destroy(){
         const{ctx}=this;
         try{
-            ctx.body=await ctx.service.user.loginOut();
+            ctx.helper.toNumber(ctx.params);
+            ctx.validate(this.userInfoRule,ctx.params);
+            ctx.helper.xssFilter(ctx.params);
+            ctx.body=await ctx.service.user.loginOut(ctx.params);
+        }catch(err){
+            ctx.body = ctx.helper.errorUserLoginOut();
+        }
+    }
+    //修改资料
+    async update(){
+        const{ctx}=this;
+        try{
+            ctx.helper.toNumber(ctx.params);
+            ctx.validate(this.updateRule);
+            ctx.validate(this.userInfoRule,ctx.params);
+            ctx.helper.xssFilter(ctx.params);
+            ctx.helper.xssFilter(ctx.request.body);
+            ctx.body=await ctx.service.user.updateUser(ctx.params.id,ctx.request.body);
         }catch(err){
             console.log(err);
             
-            ctx.helper.errorUserLoginOut();
+            ctx.body = ctx.helper.errorUserUpdate();
         }
     }
 }

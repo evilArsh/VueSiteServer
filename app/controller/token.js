@@ -11,7 +11,11 @@ class TokenController extends Controller{
         const{ctx}=this;
         try{
             let isToken = await ctx.service.token.isTokenUsable();
-            ctx.body=isToken?ctx.helper.successTokenVerify():ctx.helper.errorTokenVerify();
+            if(isToken){
+                ctx.body = await ctx.service.user.getUserInfoByToken();    
+            }else{
+                ctx.body = ctx.helper.errorTokenVerify();    
+            }
         }catch(err){
             ctx.body=ctx.helper.errorTokenRequire();
         }

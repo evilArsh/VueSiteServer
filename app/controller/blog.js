@@ -7,40 +7,43 @@ class BlogController extends Controller {
             queryAfter: { type: 'number', required: false },
             number: { type: 'number', required: false }
         };
-        this.blogContentRuleSelf = {
-            accessToken: { type: 'string', required: true },
-            queryAfter: { type: 'number', required: true },
-            number: { type: 'number', required: true }
+        this.userBlogContentRule={
+            id:{type:'number',required:true}
         }
     }
+    //获取所有的博客信息
     async index() {
         const { ctx } = this;
         try {
-            ctx.validate(this.blogContentRule);
-            ctx.helper.xssFilter(ctx.request.body);
-            ctx.body = await ctx.service.blog.getDefBlogContent(ctx.request.body);
+            ctx.helper.toNumber(ctx.query);
+            ctx.validate(this.blogContentRule, ctx.query);
+            ctx.helper.xssFilter(ctx.query);
+            ctx.body = await ctx.service.blog.getDefBlogContent(ctx.query);
         } catch (err) {
-            console.log(err)
-            //参数验证失败
-            if (ctx.status === 422) {
+            // 参数验证失败
+            if (err.code === 'invalid_param') {
                 ctx.body = ctx.helper.errorBlogContentParam();
                 return;
             }
             ctx.body = ctx.helper.errorBlogContent();
         }
-        //ctx.body='index method';
     }
+    //获取指定用户的博客信息
     async show() {
         const { ctx } = this;
         //ctx.body = ctx.params;
         try {
-            ctx.validate(this.blogContentRule);
-            ctx.helper.xssFilter(ctx.request.body);
+            ctx.helper.toNumber(ctx.query);
+            ctx.helper.toNumber(ctx.params);
+            
+            ctx.validate(this.blogContentRule,ctx.query);
+            ctx.validate(this.userBlogContentRule,ctx.params);
+            ctx.helper.xssFilter(ctx.query);
             ctx.helper.xssFilter(ctx.params);
-            ctx.body=await ctx.service.blog.getUsrBlogContent(ctx.params.id,ctx.request.body);
+            ctx.body = await ctx.service.blog.getUsrBlogContent(ctx.params.id, ctx.query);
         } catch (err) {
             //参数验证失败
-            if (ctx.status === 422) {
+            if (err.code === 'invalid_param') {
                 ctx.body = ctx.helper.errorBlogContentParam();
                 return;
             }

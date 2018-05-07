@@ -18,6 +18,7 @@ class UserService extends Service {
             return false;
         }
     }
+    //注册
     async register(data) {
         const {
             ctx,
@@ -38,10 +39,11 @@ class UserService extends Service {
                 userPassword: data.userPassword,
                 userCreateAt: time,
                 userUpdateAt: timeO.getTime(),
-                userNickName:'未设置昵称用户'
+                userNickName: '未设置昵称',
+                userIsAdmin: 'N',
+                userPhone: data.userPhone
             });
             if (results.affectedRows === 1) {
-                //
                 result = ctx.helper.successUserCreate();
                 // 是否创建accessToken
             } else {
@@ -68,9 +70,8 @@ class UserService extends Service {
                     userMail: data.userMail,
                     userPassword: data.userPassword
                 },
-                columns: ['userID', 'userMail', 'userPassword', 'userAccessToken','userNickName','userAvatar']
+                columns: ['userID', 'userMail', 'userPassword', 'userAccessToken', 'userNickName', 'userAvatar']
             });
-            // console.log('login service:' + JSON.stringify(results));
             // 用户名或密码错误
             // 加个Logger
             if (results.length !== 1) {
@@ -83,14 +84,15 @@ class UserService extends Service {
                     }
                 }
                 ctx.rotateCsrfSecret();
-                //改成把token 当作数据返回(没有这样做)
+                //origional 
                 await ctx.service.token.setAccessToken(results[0].userID, new Date().getTime());
-                
-                result = ctx.helper.successUserLogin({
-                    userNickName:results[0].userNickName,
-                    userAvatar:results[0].userAvatar,
-                    userMail:results[0].userMail
-                });
+                let info = {
+                    userID: results[0].userID,
+                    userMail: results[0].userMail,
+                    userNickName: results[0].userNickName,
+                    userAvatar: results[0].userAvatar
+                }
+                result = ctx.helper.successUserLogin(info);
                 //origional 
                 // result = ctx.helper.successUserLogin(info[0]);
             }
@@ -100,7 +102,7 @@ class UserService extends Service {
         }
     }
     //注销
-    async loginOut() {
+    async loginOut(id) {
         //只对在有效期内的token进行注销
         const {
             ctx,
@@ -109,32 +111,100 @@ class UserService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (usable) {
-                let isDead = await ctx.service.token.destroyAccessToken();
-                if (isDead) return ctx.helper.successUserLoginOut();
+                let idT = await this.getUserIDByToken();
+                if (idT.package.userID === id) {
+                    let isDead = await ctx.service.token.destroyAccessToken();
+                    if (isDead) return ctx.helper.successUserLoginOut();
+                }
             }
             return ctx.helper.errorUserLoginOut();
         } catch (err) {
             throw err;
         }
     }
-    async getOwnInfo(id, queryAndNumber) {
+    async getOwnInfo(id) {
         const {
             ctx,
             app
         } = this;
         try {
-            let {
-                queryAfter,
-                number
-            } = ctx.helper.reqParamSet(queryAndNumber);
-            let sql = `SELECT a.userNickName,a.userAvatar,
-            b.blog_id,b.blog_type,b.blog_title,b.blog_time 
-            from user_verify as a,user_blog as b where 
-            a.userID=b.userID AND a.userID=${id} ORDER BY 
-            b.blog_id DESC LIMIT ${queryAfter},${number} `;
-            app.mysql.escape(sql);
+            let sql = `SELECT userID,userNickName,userAvatar where userID=?`;
+            sql = app.mysql.escape(sql, [id]);
             const result = await app.mysql.query(sql);
             return ctx.helper.successUserInfo(result);
+        } catch (err) {
+            throw err;
+        }
+    }
+    async updateUser(id, data) {
+        const {
+            ctx,
+            app
+        } = this;
+        id=parseInt(id);
+        try {
+            let usable = await ctx.service.token.isTokenUsable();
+            if (usable) {
+                let idT = await this.getUserIDByToken();
+                if (idT.package.userID === id) {
+                    const result=await app.mysql.update('user_verify',{
+                        userNickName:data.userNickName
+                    },{
+                        where:{
+                            userID:id
+                        }
+                    });
+                    if(result.affectedRows===1){
+                        return ctx.helper.successUserUpdate();
+                    }
+                }
+            }
+            return ctx.helper.errorUserUpdate();
+        } catch (err) {
+            throw err;
+        }
+    }
+    //++++++
+    async getUserInfoByToken() {
+        const {
+            ctx,
+            app
+        } = this;
+        const token = await ctx.service.token.getAccessToken();
+        try {
+            let result = await app.mysql.select('user_verify', {
+                columns: ['userNickName', 'userAvatar', 'userMail', 'userID'],
+                where: {
+                    userAccessToken: token
+                }
+            });
+            if (result.length) {
+                return ctx.helper.successUserInfo(result[0]);
+            }
+            return ctx.helper.errorUserInfo();
+        } catch (err) {
+            throw err;
+        }
+    }
+    //++++++
+    //
+    async getUserIDByToken() {
+        const {
+            ctx,
+            app
+        } = this;
+        const token = await ctx.service.token.getAccessToken();
+        try {
+            let result = await app.mysql.select('user_verify', {
+                columns: ['userID'],
+                where: {
+                    userAccessToken: token
+                }
+            });
+            if (result.length) {
+                return ctx.helper.successUserInfo(result[0]);
+            }
+            return ctx.helper.errorUserInfo();
         } catch (err) {
             throw err;
         }

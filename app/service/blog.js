@@ -10,14 +10,23 @@ class BlogService extends Service {
         try {
             let { queryAfter, number } = ctx.helper.reqParamSet(data);
             // let p=await ctx.service.isTokenUsable();
-            const result = await app.mysql.select('user_blog', {
-                columns: ['blog_id', 'blog_title', 'blog_type', 'blog_time',  'blog_view', 'blog_content'],
-                orders: [
-                    ['blog_id', 'desc']
-                ],
-                limit: number,
-                offset: queryAfter
-            });
+            let sql=`SELECT 
+            a.userNickName,
+            b.blog_id,b.blog_title,b.blog_type,b.blog_time,b.blog_view 
+            from user_verify as a,user_blog as b 
+            where a.userID=b.userID
+            order by b.blog_id desc
+            limit ?,?
+            `;
+            const result=await app.mysql.query(sql,[queryAfter,number]);
+            // const result = await app.mysql.select('user_blog', {
+            //     columns: ['blog_id', 'blog_title', 'blog_type', 'blog_time',  'blog_view'],
+            //     orders: [
+            //         ['blog_id', 'desc']
+            //     ],
+            //     limit: number,
+            //     offset: queryAfter
+            // });
             return ctx.helper.successDefBlog(result);
         } catch (err) {
             throw err;
@@ -30,7 +39,7 @@ class BlogService extends Service {
             let { queryAfter, number } = ctx.helper.reqParamSet(data);
             const result = await app.mysql.select('user_blog', {
                 where:{userID:usr},
-                columns: ['blog_id', 'blog_title', 'blog_type', 'blog_time','blog_view', 'blog_content'],
+                columns: ['blog_id', 'blog_title', 'blog_type', 'blog_time','blog_view'],
                 orders: [
                     ['blog_id', 'desc']
                 ],

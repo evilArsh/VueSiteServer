@@ -3,21 +3,24 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
-  "dependencies": {
+  "dependencies":  {
+    "await-stream-ready": "^1.0.1",
     "blueimp-md5": "^2.10.0",
-    "egg": "^2.0.0",
+    "egg": "^2.6.1",
     "egg-cors": "^2.0.0",
     "egg-mysql": "^3.0.0",
-    "egg-scripts": "^2.1.0",
-    "egg-validate": "^1.0.0"
+    "egg-scripts": "^2.6.0",
+    "egg-validate": "^1.0.0",
+    "formidable": "^1.2.1",
+    "stream-wormhole": "^1.0.3"
   },
   "devDependencies": {
     "autod": "^3.0.1",
     "autod-egg": "^1.0.0",
-    "egg-bin": "^4.3.5",
+    "egg-bin": "^4.6.3",
     "egg-ci": "^1.8.0",
-    "egg-mock": "^3.13.0",
-    "eslint": "^4.11.0",
+    "egg-mock": "^3.17.0",
+    "eslint": "^4.19.1",
     "eslint-config-egg": "^5.1.0",
     "webstorm-disable-index": "^1.2.0"
   },

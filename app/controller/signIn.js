@@ -19,12 +19,11 @@ class SignInController extends Controller {
             ctx.body = await ctx.service.user.login(ctx.request.body);
         } catch (err) {
             // 如果参数校验未通过，将会抛出一个 status = 422 的异常
-            if (ctx.status === 422) {
+            if (err.code === 'invalid_param') {
                 ctx.body = ctx.helper.errorUserFormate();
                 return;
             }
-            console.log(err);
-            // 邮箱格式不对
+            //邮箱格式不对
             if (err === this.app.config.status.ERROR_MAIL_FORMATE) {
                 ctx.body = ctx.helper.errorMailFormate();
                 return;
