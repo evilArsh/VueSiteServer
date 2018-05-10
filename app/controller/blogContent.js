@@ -54,8 +54,7 @@ class BlogContentController extends Controller {
         try {
             ctx.helper.toNumber(ctx.query);
             ctx.validate(this.createRule);
-            ctx.validate(this.idRule,ctx.query)            
-            ctx.helper.xssFilter(ctx.params);
+            ctx.validate(this.idRule,ctx.query);
             ctx.body = await ctx.service.blogContent.createBlogContent(ctx.query.id,ctx.request.body);
         } catch (err) {
             //参数验证失败

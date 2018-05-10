@@ -11,8 +11,8 @@ class UserController extends Controller {
         }
     }
     async index() {
-        const { ctx, app } = this;
-        ctx.body =await ctx.service.token.demoGetAccessToken();
+        // const { ctx, app } = this;
+        // ctx.body =await ctx.service.token.demoGetAccessToken();
     }
     //个人数据
     async show() {
@@ -33,7 +33,7 @@ class UserController extends Controller {
             ctx.helper.toNumber(ctx.params);
             ctx.validate(this.userInfoRule,ctx.params);
             ctx.helper.xssFilter(ctx.params);
-            ctx.body=await ctx.service.user.loginOut(ctx.params);
+            ctx.body=await ctx.service.user.loginOut(ctx.params.id);
         }catch(err){
             ctx.body = ctx.helper.errorUserLoginOut();
         }
@@ -49,8 +49,6 @@ class UserController extends Controller {
             ctx.helper.xssFilter(ctx.request.body);
             ctx.body=await ctx.service.user.updateUser(ctx.params.id,ctx.request.body);
         }catch(err){
-            console.log(err);
-            
             ctx.body = ctx.helper.errorUserUpdate();
         }
     }

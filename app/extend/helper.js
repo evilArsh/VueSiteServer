@@ -21,13 +21,16 @@ module.exports = {
         }
         return fmt;
     },
-    //ctx.query 变为整形
+    //ctx.query 变为整形，只是单纯的‘123’转换为123
     //data: JSON
     toNumber(data) {
         Object.keys(data).forEach(key => {
             if (typeof data[key] === 'object') {
                 this.toNumber(data[key]);
             } else if (typeof data[key] !== 'number') {
+                if(isNaN(data[key])){
+                    throw new Error('转换的字符串中不能包含非数字字符')
+                }
                 data[key] = parseInt(data[key]);
             }
         });

@@ -12,4 +12,5 @@ module.exports = app => {
     router.resources('signUp', '/api/signUp', controller.signUp);
     router.resources('token', '/api/token', controller.token);
     router.resources('resources', '/api/'+app.config.sourceDir, controller.resources);
+    router.resources('aa', '/api/aa', controller.aa);
 };

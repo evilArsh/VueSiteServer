@@ -111,7 +111,7 @@ module.exports = appInfo => {
     SUCCESS_BLOG_DELETE: '博客删除成功',
 
     //AccessToken
-    ERROR_TOKEN_VERIFY: 'AccessToken已失效',
+    ERROR_TOKEN_VERIFY: '用户身份已过期,请重新登录',
     SUCCESS_TOKEN_VERIFY: 'AccessToken有效',
     ERROR_TOKEN_REQUIRE: '获取AccessToken失败',
     SUCCESS_TOKEN_SET: 'AccessToken已发放',

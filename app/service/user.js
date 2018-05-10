@@ -109,6 +109,7 @@ class UserService extends Service {
             app
         } = this;
         try {
+            id=parseInt(id);
             let usable = await ctx.service.token.isTokenUsable();
             if (usable) {
                 let idT = await this.getUserIDByToken();
@@ -128,8 +129,8 @@ class UserService extends Service {
             app
         } = this;
         try {
-            let sql = `SELECT userID,userNickName,userAvatar where userID=?`;
-            sql = app.mysql.escape(sql, [id]);
+            id=parseInt(id);
+            let sql = `SELECT userID,userNickName,userAvatar from user_verify where userID=${id}`;
             const result = await app.mysql.query(sql);
             return ctx.helper.successUserInfo(result);
         } catch (err) {
@@ -173,7 +174,7 @@ class UserService extends Service {
         const token = await ctx.service.token.getAccessToken();
         try {
             let result = await app.mysql.select('user_verify', {
-                columns: ['userNickName', 'userAvatar', 'userMail', 'userID'],
+                columns: ['userNickName', 'userAvatar', 'userMail', 'userID','userIsAdmin'],
                 where: {
                     userAccessToken: token
                 }

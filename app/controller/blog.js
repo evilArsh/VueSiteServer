@@ -15,6 +15,7 @@ class BlogController extends Controller {
     async index() {
         const { ctx } = this;
         try {
+            
             ctx.helper.toNumber(ctx.query);
             ctx.validate(this.blogContentRule, ctx.query);
             ctx.helper.xssFilter(ctx.query);
