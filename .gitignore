@@ -8,6 +8,7 @@ yarn.lock
 coverage/
 .idea/
 run/
+config/config.prod.js
 .DS_Store
 *.sw*
 *.un~
