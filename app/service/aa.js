@@ -934,11 +934,165 @@ class AaService extends Service {
                         id: parseInt(data.id)
                     }
                 });
-                if (result.affectedRows === 1) {
-                    return { success: true, data: '回复成功' };
-    
+            if (result.affectedRows === 1) {
+                return { success: true, data: '回复成功' };
+
+            }
+            return { success: false, data: '回复失败' };
+        } catch (err) {
+            throw err;
+        }
+    }
+    async getInfo() {
+        const {
+            ctx,
+            app
+        } = this;
+        try {
+            let usable = await ctx.service.token.isTokenUsable();
+            if (!usable) {
+                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+            }
+            let userIDR = await ctx.service.user.getUserIDByToken();
+
+            const result = await app.mysql.select('user_verify', {
+                columns: ['userNickName', 'userSex', 'userClass', 'userNumber',
+                    'userCollege', 'userMajor', 'userMail', 'userPhone'],
+                where: {
+                    userID: userIDR.package.userID
                 }
-                return { success: false, data: '回复失败' };
+            });
+            return { success: true, package: result[0], data: 'ok' };
+        } catch (err) {
+            throw err;
+        }
+    }
+    async updateUserInfo(data) {
+        const {
+            ctx,
+            app
+        } = this;
+        try {
+            let usable = await ctx.service.token.isTokenUsable();
+            if (!usable) {
+                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+            }
+            let userIDR = await ctx.service.user.getUserIDByToken();
+
+            const result = await app.mysql.update('user_verify', { 
+                userNickName:data.userNickName,
+                userSex:data.userSex,
+                userClass:data.userClass,
+                userNumber:data.userNumber,
+                userCollege:data.userCollege,
+                userMajor:data.userMajor,
+                userMail:data.userMail,
+                userPhone:data.userPhone,
+                
+             },
+                {
+                    where: {
+                        userID: userIDR.package.userID
+                    }
+                });
+            if (result.affectedRows === 1) {
+                return { success: true, data: '修改成功' };
+
+            }
+            return { success: false, data: '修改失败' };
+        } catch (err) {
+            throw err;
+        }
+    }
+    async updateSecret(data) {
+        const {
+            ctx,
+            app
+        } = this;
+        try {
+            let usable = await ctx.service.token.isTokenUsable();
+            if (!usable) {
+                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+            }
+            let userIDR = await ctx.service.user.getUserIDByToken();
+            let sql=`
+            update user_verify set userPassword='${data.password}' 
+            where userID=${userIDR.package.userID} and userPassword='${data.oldPassword}'
+            and userMail='${data.mail}'
+            `;
+            const result=await app.mysql.query(sql)
+            // const result = await app.mysql.update('user_verify', {
+            //     'userPassword': data.password
+            // }, {
+            //         where: {
+            //             userID: userIDR.package.userID,
+            //             userPassword: data.oldPassword,
+            //             userMail: data.mail
+            //         }
+            //     });
+            if (result.affectedRows === 1) {
+                return { success: true, data: '修改成功' };
+
+            }
+            return { success: false, data: '修改失败' };
+        } catch (err) {
+            throw err;
+        }
+    }
+    async getOwnProj(data){
+        const { ctx, app } = this;
+        try {
+            let usable = await ctx.service.token.isTokenUsable();
+            if (!usable) {
+                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+            }
+            let userIDR = await ctx.service.user.getUserIDByToken();
+            let { queryAfter, number } = ctx.helper.reqParamSet(data);
+            queryAfter = parseInt(queryAfter);
+            number = parseInt(number);
+            const result = await app.mysql.select('user_project', {
+                columns: ['id', 'projectName', 'time','userPass'],
+                where:{
+                    userID:userIDR.package.userID
+                },
+                orders: [
+                    ['id', 'desc']
+                ],
+                limit: number,
+                offset: queryAfter
+            });
+            let sql = `select count(id)as number from user_project where
+            userID=${userIDR.package.userID}`;
+            let count = await app.mysql.query(sql);
+            result.push(count[0].number)
+
+            // console.log(Object.assign({},count,result));
+
+            return this.setStatus(true, '获取数据成功', result);
+        } catch (err) {
+            throw err;
+        }
+    }
+    async delOwnP(data){
+        const {
+            ctx,
+            app
+        } = this;
+        try {
+            let usable = await ctx.service.token.isTokenUsable();
+            let userIDR = await ctx.service.user.getUserIDByToken();
+
+            if (!usable) {
+                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+            }
+            let rs = await app.mysql.delete('user_project', {
+                id: parseInt(data.id),
+                userID:userIDR.package.userID
+            });
+            if (rs.affectedRows === 1) {
+                return this.setStatus(true, '删除成功')
+            }
+            return this.setStatus(false, '删除失败')
         } catch (err) {
             throw err;
         }

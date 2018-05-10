@@ -33,6 +33,9 @@ class AAController extends Controller {
                 case "sendReply": ctx.body = await ctx.service.aa.sendReply(ctx.request.body); break;
                 case "check": ctx.body = await ctx.service.aa.check(ctx.request.body); break;
                 case "change": ctx.body = await ctx.service.aa.change(ctx.request.body); break;
+                case "updateUserInfo": ctx.body = await ctx.service.aa.updateUserInfo(ctx.request.body); break;
+                case "updateSecret": ctx.body = await ctx.service.aa.updateSecret(ctx.request.body); break;
+                case "delOwnP": ctx.body = await ctx.service.aa.delOwnP(ctx.request.body); break;
                 default:
                     ctx.body = {success:false,data:'请求出错'};
             }
@@ -64,6 +67,9 @@ class AAController extends Controller {
 
                 case "getBoardReply": ctx.body = await ctx.service.aa.getBoardReply(ctx.query); break;
                 case "getUserData": ctx.body = await ctx.service.aa.getUserData(ctx.query); break;
+                case "getInfo": ctx.body = await ctx.service.aa.getInfo(); break;
+                case "getOwnProj": ctx.body = await ctx.service.aa.getOwnProj(ctx.query); break;
+                
                 default:
                     ctx.body = "{success:false,data:'请求出错'}";
             }
