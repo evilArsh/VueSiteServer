@@ -7,7 +7,8 @@ class BlogContentController extends Controller {
             content: { type: 'string', required: true },
             title: { type: 'string', required: true },
             type: { type: 'string', required: true },
-            describe:{type:'string',required:false}
+            describe:{type:'string',required:false},
+            img:{type:'string',required:false}
         };
         this.deleteRule = {
             blogID: { type: 'number', required: true }

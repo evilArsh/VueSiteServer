@@ -12,7 +12,7 @@ class BlogService extends Service {
             // let p=await ctx.service.isTokenUsable();
             let sql=`SELECT 
             a.userNickName,
-            b.blog_id,b.blog_title,b.blog_type,b.blog_time,b.blog_view,b.blog_describe
+            b.blog_id,b.blog_title,b.blog_img,b.blog_type,b.blog_time,b.blog_view,b.blog_describe
             from user_verify as a,user_blog as b 
             where a.userID=b.userID
             order by b.blog_id desc

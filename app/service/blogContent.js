@@ -14,7 +14,7 @@ class BlogContentService extends Service {
         try {
             let sql = `SELECT 
             a.userNickName,
-            b.blog_content,b.blog_title,b.blog_type,b.blog_time,b.blog_view 
+            b.blog_content,b.blog_img,b.blog_title,b.blog_type,b.blog_time,b.blog_view 
             from user_verify as a,user_blog as b 
             where a.userID=b.userID and blog_id=?
             `;
@@ -48,6 +48,7 @@ class BlogContentService extends Service {
                         blog_title: ctx.helper.xssFilter(data.title),
                         blog_type: ctx.helper.xssFilter(data.type),
                         blog_content: ctx.helper.shtml(data.content),
+                        blog_img:data.img,
                         blog_describe: ctx.helper.xssFilter(data.describe),
                         blog_time: ctx.helper.dateFormate('yyyy-MM-dd hh:mm:ss', new Date())
                     });
