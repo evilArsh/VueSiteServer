@@ -10,8 +10,8 @@ module.exports = appInfo => {
   config.middleware = [];
   // request body size
   config.bodyParser = {
-    jsonLimit: '1mb',
-    formLimit: '1mb',
+    jsonLimit: '10mb',
+    formLimit: '10mb',
   };
   exports.cors = {
     //{string|Function} origin: '*',

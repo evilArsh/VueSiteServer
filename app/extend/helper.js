@@ -292,11 +292,12 @@ module.exports = {
             data: this.app.config.info.ERROR_USER_AVATAR
         }
     },
-    successUserAvatar() {
+    successUserAvatar(uri) {
         return {
             success: true,
             status: '024',
-            data: this.app.config.info.SUCCESS_USER_AVATAR
+            data: this.app.config.info.SUCCESS_USER_AVATAR,
+            package:uri
         }
     },
 };

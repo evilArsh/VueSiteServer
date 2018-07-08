@@ -70,7 +70,7 @@ class UserService extends Service {
                     userMail: data.userMail,
                     userPassword: data.userPassword
                 },
-                columns: ['userID', 'userMail', 'userPassword', 'userAccessToken', 'userNickName', 'userAvatar']
+                columns: ['userID', 'userMail', 'userPassword', 'userAccessToken', 'userNickName', 'url']
             });
             // 用户名或密码错误
             // 加个Logger
@@ -90,7 +90,7 @@ class UserService extends Service {
                     userID: results[0].userID,
                     userMail: results[0].userMail,
                     userNickName: results[0].userNickName,
-                    userAvatar: results[0].userAvatar
+                    url: results[0].url
                 }
                 result = ctx.helper.successUserLogin(info);
                 //origional 
@@ -114,7 +114,7 @@ class UserService extends Service {
             if (usable) {
                 let idT = await this.getUserIDByToken();
                 if (idT.package.userID === id) {
-                    let isDead = await ctx.service.token.destroyAccessToken();
+                    let isDead = await ctx.service.token.destroyAccessToken(id);
                     if (isDead) return ctx.helper.successUserLoginOut();
                 }
             }
@@ -130,7 +130,7 @@ class UserService extends Service {
         } = this;
         try {
             id=parseInt(id);
-            let sql = `SELECT userID,userNickName,userAvatar from user_verify where userID=${id}`;
+            let sql = `SELECT userID,userNickName,url from user_verify where userID=${id}`;
             const result = await app.mysql.query(sql);
             return ctx.helper.successUserInfo(result);
         } catch (err) {
@@ -174,7 +174,7 @@ class UserService extends Service {
         const token = await ctx.service.token.getAccessToken();
         try {
             let result = await app.mysql.select('user_verify', {
-                columns: ['userNickName', 'userAvatar', 'userMail', 'userID','userIsAdmin'],
+                columns: ['userNickName', 'url', 'userMail', 'userID','userIsAdmin'],
                 where: {
                     userAccessToken: token
                 }

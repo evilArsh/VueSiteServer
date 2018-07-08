@@ -82,12 +82,14 @@ class TokenService extends Service {
             signed: true
         });
     }
-    async destroyAccessToken() {
+    async destroyAccessToken(id) {
         //使一个token失效(手动延时),设置延迟标志
         const {
             app
         } = this;
         let token = this.getAccessToken();
+        // console.log('token',token);
+        
         let time = new Date().getTime() - (app.config.tokenDelay) * 2;
         try {
             let result = await app.mysql.update('user_verify', {
@@ -95,7 +97,7 @@ class TokenService extends Service {
                 userUpdateAt: time
             }, {
                     where: {
-                        userAccessToken: token
+                        userID: id
                     }
                 });
             return result.affectedRows === 1;

@@ -8,7 +8,7 @@ class BlogContentController extends Controller {
             title: { type: 'string', required: true },
             type: { type: 'string', required: true },
             describe:{type:'string',required:false},
-            img:{type:'string',required:false}
+            img:{type:'string',required:false,allowEmpty:true}
         };
         this.deleteRule = {
             blogID: { type: 'number', required: true }
@@ -55,9 +55,10 @@ class BlogContentController extends Controller {
         try {
             ctx.helper.toNumber(ctx.query);
             ctx.validate(this.createRule);
-            ctx.validate(this.idRule,ctx.query);
             ctx.body = await ctx.service.blogContent.createBlogContent(ctx.query.id,ctx.request.body);
         } catch (err) {
+            console.log(err);
+            
             //参数验证失败
             if (err.code === 'invalid_param') {
                 ctx.body = ctx.helper.errorBlogContentParam();

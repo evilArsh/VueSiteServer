@@ -2,7 +2,6 @@
 const Service = require('egg').Service;
 const path = require('path');
 const fs = require('fs');
-const formidable = require("formidable");
 const awaitWriteStream = require('await-stream-ready').write;
 const sendToWormhole = require('stream-wormhole');
 class FileService extends Service {
@@ -22,14 +21,14 @@ class FileService extends Service {
                 if (idT.package.userID === id) {
                     let uri=await this._upLoadImg();
                     const result=await app.mysql.update('user_verify',{
-                        userAvatar:uri
+                        url:uri
                     },{
                         where:{
                             userID:id
                         }
                     });
                     if(result.affectedRows===1){
-                        return ctx.helper.successUserAvatar();
+                        return ctx.helper.successUserAvatar(uri);
                     }
                 }
             }
@@ -45,13 +44,13 @@ class FileService extends Service {
             app
         } = this;
         let URI = '';
-        const parts = this.ctx.multipart({ autoFields: true });
+        const parts = ctx.multipart({ autoFields: true });
         let part;
         try {
             while ((part = await parts()) !== null) {
                 if (typeof part === 'object' && 'undefined' !== typeof part.filename) {
-                    const fn = part.filename.toLowerCase();
-                    URI = part.filename;
+                    const fn = app.md5(part.filename.toLowerCase(), new Date(), false) + part.filename.substr(part.filename.lastIndexOf('.'));
+                    URI = path.join('/', fn);
                     const target = path.join(this.config.baseDir, app.config.sourceDir, fn);
                     const writeStream = fs.createWriteStream(target);
                     await awaitWriteStream(part.pipe(writeStream));
