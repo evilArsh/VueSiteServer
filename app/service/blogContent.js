@@ -25,7 +25,7 @@ class BlogContentService extends Service {
             //         blog_id:id
             //     }
             // });
-            return ctx.helper.successDefBlog(result);
+            return ctx.app.successDefBlog(result);
         } catch (err) {
             throw err;
         }
@@ -47,20 +47,20 @@ class BlogContentService extends Service {
                         userID: userIDR.package.userID,
                         blog_title: ctx.helper.xssFilter(data.title),
                         blog_type: ctx.helper.xssFilter(data.type),
-                        blog_content: ctx.helper.shtml(data.content),
+                        blog_content: ctx.app.shtml(data.content),
                         blog_img:data.img,
                         blog_describe: ctx.helper.xssFilter(data.describe),
                         blog_time: ctx.helper.dateFormate('yyyy-MM-dd hh:mm:ss', new Date())
                     });
                     if (result.affectedRows === 1) {
-                        return ctx.helper.successBlogCreate();
+                        return ctx.app.successBlogCreate();
                     }
                 }
             }
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
-            return ctx.helper.errorBlogCreate();
+            return ctx.app.errorBlogCreate();
         } catch (err) {
             throw err;
         }
@@ -75,7 +75,7 @@ class BlogContentService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
             const result = await app.mysql.delete('user_blog', {
@@ -85,9 +85,9 @@ class BlogContentService extends Service {
                 }
             });
             if (result.affectedRows === 1) {
-                return ctx.helper.successBlogDelete();
+                return ctx.app.successBlogDelete();
             }
-            return ctx.helper.errorBlogDelete();
+            return ctx.app.errorBlogDelete();
         } catch (err) {
             throw err;
         }
@@ -103,7 +103,7 @@ class BlogContentService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
             const result = await app.mysql.update('user_blog', {
@@ -117,9 +117,9 @@ class BlogContentService extends Service {
                     }
                 });
             if (result.affectedRows === 1) {
-                return ctx.helper.successBlogUpdate();
+                return ctx.app.successBlogUpdate();
             }
-            return ctx.helper.errorBlogUpdate();
+            return ctx.app.errorBlogUpdate();
         } catch (err) {
             throw err;
         }

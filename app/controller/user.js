@@ -23,7 +23,7 @@ class UserController extends Controller {
             ctx.helper.xssFilter(ctx.params);
             ctx.body = await ctx.service.user.getOwnInfo(ctx.params.id);
         } catch (err) {
-            ctx.body = ctx.helper.errorUserInfo();
+            ctx.body = ctx.app.errorUserInfo();
         }
     }
     //注销登录
@@ -35,7 +35,7 @@ class UserController extends Controller {
             ctx.helper.xssFilter(ctx.params);
             ctx.body=await ctx.service.user.loginOut(ctx.params.id);
         }catch(err){
-            ctx.body = ctx.helper.errorUserLoginOut();
+            ctx.body = ctx.app.errorUserLoginOut();
         }
     }
     //修改资料
@@ -49,7 +49,7 @@ class UserController extends Controller {
             ctx.helper.xssFilter(ctx.request.body);
             ctx.body=await ctx.service.user.updateUser(ctx.params.id,ctx.request.body);
         }catch(err){
-            ctx.body = ctx.helper.errorUserUpdate();
+            ctx.body = ctx.app.errorUserUpdate();
         }
     }
 }

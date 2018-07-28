@@ -20,15 +20,15 @@ class SignInController extends Controller {
         } catch (err) {
             // 如果参数校验未通过，将会抛出一个 status = 422 的异常
             if (err.code === 'invalid_param') {
-                ctx.body = ctx.helper.errorUserFormate();
+                ctx.body = ctx.app.errorUserFormate();
                 return;
             }
             //邮箱格式不对
             if (err === this.app.config.status.ERROR_MAIL_FORMATE) {
-                ctx.body = ctx.helper.errorMailFormate();
+                ctx.body = ctx.app.errorMailFormate();
                 return;
             }
-            ctx.body = ctx.helper.errorUserLogin();
+            ctx.body = ctx.app.errorUserLogin();
         }
     }
 }

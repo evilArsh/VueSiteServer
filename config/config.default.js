@@ -13,12 +13,17 @@ module.exports = appInfo => {
     jsonLimit: '10mb',
     formLimit: '10mb',
   };
-  exports.cors = {
+  config.cors = {
     //{string|Function} origin: '*',
     //{string|Array} allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH'
     credentials: true
   };
+  config.middleware=['log'];
+  //日志
+  config.logger={
 
+  };
+  config.TOKEN='cjxk';
   // JSONP CSRF验证
   config.jsonp = {
     csrf: true,

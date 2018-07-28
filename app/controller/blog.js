@@ -23,10 +23,10 @@ class BlogController extends Controller {
         } catch (err) {
             // 参数验证失败
             if (err.code === 'invalid_param') {
-                ctx.body = ctx.helper.errorBlogContentParam();
+                ctx.body = ctx.app.errorBlogContentParam();
                 return;
             }
-            ctx.body = ctx.helper.errorBlogContent();
+            ctx.body = ctx.app.errorBlogContent();
         }
     }
     //获取指定用户的博客信息
@@ -45,10 +45,10 @@ class BlogController extends Controller {
         } catch (err) {
             //参数验证失败
             if (err.code === 'invalid_param') {
-                ctx.body = ctx.helper.errorBlogContentParam();
+                ctx.body = ctx.app.errorBlogContentParam();
                 return;
             }
-            ctx.body = ctx.helper.errorBlogContent();
+            ctx.body = ctx.app.errorBlogContent();
         }
     }
 }

@@ -40,7 +40,7 @@ class ResourcesController extends Controller {
         } catch (err) {
             console.log(err);
             
-            ctx.body=ctx.helper.errorUserAvatar();
+            ctx.body=ctx.app.errorUserAvatar();
         }
     }
 }

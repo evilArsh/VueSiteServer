@@ -27,7 +27,7 @@ class BlogService extends Service {
             //     limit: number,
             //     offset: queryAfter
             // });
-            return ctx.helper.successDefBlog(result);
+            return ctx.app.successDefBlog(result);
         } catch (err) {
             throw err;
         }
@@ -46,7 +46,7 @@ class BlogService extends Service {
                 limit: number,
                 offset: queryAfter
             });
-            return ctx.helper.successUserBlog(result);
+            return ctx.app.successUserBlog(result);
         } catch (err) {
             // console.log(err)
             throw err;

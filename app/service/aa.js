@@ -176,7 +176,7 @@ class AaService extends Service {
         } = this;
         let usable = await ctx.service.token.isTokenUsable();
         if (!usable) {
-            return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+            return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
         }
         let ad = await this.isAdmin();
         if (!ad) {
@@ -230,7 +230,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             //事务开启
 
@@ -292,7 +292,7 @@ class AaService extends Service {
 
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
         } catch (err) {
 
@@ -308,7 +308,7 @@ class AaService extends Service {
             let usable = await ctx.service.token.isTokenUsable();
 
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let ad = await this.isAdmin();
             if (!ad) {
@@ -340,7 +340,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let ad = await this.isAdmin();
             if (!ad) {
@@ -373,7 +373,7 @@ class AaService extends Service {
             let usable = await ctx.service.token.isTokenUsable();
 
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let ad = await this.isAdmin();
             if (!ad) {
@@ -401,7 +401,7 @@ class AaService extends Service {
             let usable = await ctx.service.token.isTokenUsable();
 
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let ad = await this.isAdmin();
             if (!ad) {
@@ -442,7 +442,7 @@ class AaService extends Service {
             let usable = await ctx.service.token.isTokenUsable();
 
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let ad = await this.isAdmin();
             if (!ad) {
@@ -475,7 +475,7 @@ class AaService extends Service {
             let usable = await ctx.service.token.isTokenUsable();
 
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let ad = await this.isAdmin();
             if (!ad) {
@@ -562,7 +562,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userID = await ctx.service.user.getUserIDByToken();
             const result = await app.mysql.delete('user_content', {
@@ -588,7 +588,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userID = await ctx.service.user.getUserIDByToken();
             const result = await app.mysql.delete('user_contentReply', {
@@ -614,7 +614,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             console.log(data.contentID);
 
@@ -637,7 +637,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let sql = 'update user_contentReply set starTime=starTime+1 where contentID =?';
             // sql = app.mysql.escape(sql);
@@ -659,7 +659,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
             let userInfo = await ctx.service.user.getUserInfoByToken();
@@ -692,7 +692,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let attachContentID = parseInt(data.attachContentID);
             let replyID = parseInt(data.replyID);
@@ -741,7 +741,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             console.log(data.contentID);
 
@@ -764,7 +764,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let sql = 'update user_contentReply set starTime=starTime+1 where contentID =?';
             // sql = app.mysql.escape(sql);
@@ -786,7 +786,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
             let rst = await app.mysql.insert('user_message', {
@@ -817,7 +817,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
             let rst = await app.mysql.delete('user_message', {
@@ -845,7 +845,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
             let { queryAfter, number } = ctx.helper.reqParamSet(data);
@@ -878,7 +878,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let ad = await this.isAdmin();
             if (!ad) {
@@ -918,7 +918,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let ad = await this.isAdmin();
             if (!ad) {
@@ -951,7 +951,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
 
@@ -975,7 +975,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
 
@@ -1012,7 +1012,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
             let sql=`
@@ -1044,7 +1044,7 @@ class AaService extends Service {
         try {
             let usable = await ctx.service.token.isTokenUsable();
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let userIDR = await ctx.service.user.getUserIDByToken();
             let { queryAfter, number } = ctx.helper.reqParamSet(data);
@@ -1083,7 +1083,7 @@ class AaService extends Service {
             let userIDR = await ctx.service.user.getUserIDByToken();
 
             if (!usable) {
-                return ctx.helper.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
+                return ctx.app.errorUserIdentify(app.config.ERROR_USER_IDENTIFY);
             }
             let rs = await app.mysql.delete('user_project', {
                 id: parseInt(data.id),

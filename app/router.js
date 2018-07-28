@@ -13,4 +13,6 @@ module.exports = app => {
     router.resources('token', '/api/token', controller.token);
     router.resources('resources', '/api/'+app.config.sourceDir, controller.resources);
     router.resources('aa', '/api/aa', controller.aa);
+
+    router.resources('wx_cjxk', '/api/cjxk', controller.cjxk);
 };

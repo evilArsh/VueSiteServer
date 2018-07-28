@@ -28,11 +28,11 @@ class FileService extends Service {
                         }
                     });
                     if(result.affectedRows===1){
-                        return ctx.helper.successUserAvatar(uri);
+                        return ctx.app.successUserAvatar(uri);
                     }
                 }
             }
-            return ctx.helper.errorUserAvatar();
+            return ctx.app.errorUserAvatar();
 
         } catch (err) {
             throw err;

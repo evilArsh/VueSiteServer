@@ -24,10 +24,10 @@ class BlogContentController extends Controller {
     //     } catch (err) {
     //         // 参数验证失败
     //         if (err.code === 'invalid_param') {
-    //             ctx.body = ctx.helper.errorBlogContentParam();
+    //             ctx.body = ctx.app.errorBlogContentParam();
     //             return;
     //         }
-    //         ctx.body = ctx.helper.errorBlogContent();
+    //         ctx.body = ctx.app.errorBlogContent();
     //     }
     // }
 
@@ -43,10 +43,10 @@ class BlogContentController extends Controller {
             
             //参数验证失败
             if (err.code === 'invalid_param') {
-                ctx.body = ctx.helper.errorBlogContentParam();
+                ctx.body = ctx.app.errorBlogContentParam();
                 return;
             }
-            ctx.body = ctx.helper.errorBlogContent();
+            ctx.body = ctx.app.errorBlogContent();
         }
     }
     //创建一条博客内容
@@ -61,10 +61,10 @@ class BlogContentController extends Controller {
             
             //参数验证失败
             if (err.code === 'invalid_param') {
-                ctx.body = ctx.helper.errorBlogContentParam();
+                ctx.body = ctx.app.errorBlogContentParam();
                 return;
             }
-            ctx.body = ctx.helper.errorBlogCreate();
+            ctx.body = ctx.app.errorBlogCreate();
         }
     }
     //删除一条博客
@@ -78,10 +78,10 @@ class BlogContentController extends Controller {
         } catch (err) {
             //参数验证失败
             if (err.code === 'invalid_param') {
-                ctx.body = ctx.helper.errorBlogContentParam();
+                ctx.body = ctx.app.errorBlogContentParam();
                 return;
             }
-            ctx.body = ctx.helper.errorBlogDelete();
+            ctx.body = ctx.app.errorBlogDelete();
         }
 
     }
@@ -97,10 +97,10 @@ class BlogContentController extends Controller {
         } catch (err) {
             //参数验证失败
             if (err.code === 'invalid_param') {
-                ctx.body = ctx.helper.errorBlogContentParam();
+                ctx.body = ctx.app.errorBlogContentParam();
                 return;
             }
-            ctx.body = ctx.helper.errorBlogUpdate();
+            ctx.body = ctx.app.errorBlogUpdate();
         }
 
     }

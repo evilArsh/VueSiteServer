@@ -14,10 +14,10 @@ class TokenController extends Controller{
             if(isToken){
                 ctx.body = await ctx.service.user.getUserInfoByToken();    
             }else{
-                ctx.body = ctx.helper.errorTokenVerify();    
+                ctx.body = ctx.app.errorTokenVerify();    
             }
         }catch(err){
-            ctx.body=ctx.helper.errorTokenRequire();
+            ctx.body=ctx.app.errorTokenRequire();
         }
     }
 };

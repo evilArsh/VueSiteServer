@@ -31,7 +31,7 @@ class UserService extends Service {
         try {
             let r = await this.isUserNone(data.userMail);
             if (!r) {
-                return ctx.helper.errorUserRegister();
+                return ctx.app.errorUserRegister();
             }
 
             const results = await app.mysql.insert('user_verify', {
@@ -44,10 +44,10 @@ class UserService extends Service {
                 userPhone: data.userPhone
             });
             if (results.affectedRows === 1) {
-                result = ctx.helper.successUserCreate();
+                result = ctx.app.successUserCreate();
                 // 是否创建accessToken
             } else {
-                result = ctx.helper.errorUserCreate();
+                result = ctx.app.errorUserCreate();
             }
             return result;
         } catch (err) {
@@ -75,12 +75,12 @@ class UserService extends Service {
             // 用户名或密码错误
             // 加个Logger
             if (results.length !== 1) {
-                result = ctx.helper.errorUserLogin();
+                result = ctx.app.errorUserLogin();
             } else {
                 if (token !== undefined && token === results[0].userAccessToken) {
                     let q = await ctx.service.token.isTokenUsable(results[0].userAccessToken);
                     if (q) {
-                        return ctx.helper.errorUserReLogin();
+                        return ctx.app.errorUserReLogin();
                     }
                 }
                 ctx.rotateCsrfSecret();
@@ -92,9 +92,9 @@ class UserService extends Service {
                     userNickName: results[0].userNickName,
                     url: results[0].url
                 }
-                result = ctx.helper.successUserLogin(info);
+                result = ctx.app.successUserLogin(info);
                 //origional 
-                // result = ctx.helper.successUserLogin(info[0]);
+                // result = ctx.app.successUserLogin(info[0]);
             }
             return result;
         } catch (err) {
@@ -115,10 +115,10 @@ class UserService extends Service {
                 let idT = await this.getUserIDByToken();
                 if (idT.package.userID === id) {
                     let isDead = await ctx.service.token.destroyAccessToken(id);
-                    if (isDead) return ctx.helper.successUserLoginOut();
+                    if (isDead) return ctx.app.successUserLoginOut();
                 }
             }
-            return ctx.helper.errorUserLoginOut();
+            return ctx.app.errorUserLoginOut();
         } catch (err) {
             throw err;
         }
@@ -132,7 +132,7 @@ class UserService extends Service {
             id=parseInt(id);
             let sql = `SELECT userID,userNickName,url from user_verify where userID=${id}`;
             const result = await app.mysql.query(sql);
-            return ctx.helper.successUserInfo(result);
+            return ctx.app.successUserInfo(result);
         } catch (err) {
             throw err;
         }
@@ -156,11 +156,11 @@ class UserService extends Service {
                         }
                     });
                     if(result.affectedRows===1){
-                        return ctx.helper.successUserUpdate();
+                        return ctx.app.successUserUpdate();
                     }
                 }
             }
-            return ctx.helper.errorUserUpdate();
+            return ctx.app.errorUserUpdate();
         } catch (err) {
             throw err;
         }
@@ -180,9 +180,9 @@ class UserService extends Service {
                 }
             });
             if (result.length) {
-                return ctx.helper.successUserInfo(result[0]);
+                return ctx.app.successUserInfo(result[0]);
             }
-            return ctx.helper.errorUserInfo();
+            return ctx.app.errorUserInfo();
         } catch (err) {
             throw err;
         }
@@ -203,9 +203,9 @@ class UserService extends Service {
                 }
             });
             if (result.length) {
-                return ctx.helper.successUserInfo(result[0]);
+                return ctx.app.successUserInfo(result[0]);
             }
-            return ctx.helper.errorUserInfo();
+            return ctx.app.errorUserInfo();
         } catch (err) {
             throw err;
         }
