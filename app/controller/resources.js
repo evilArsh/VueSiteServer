@@ -20,7 +20,7 @@ class ResourcesController extends Controller {
             const filePath = path.resolve(baseDir, uri);
             fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
             this.ctx.attachment(uri);
-            this.ctx.set('Content-Type', 'application/octet-stream');
+            this.ctx.set('Content-Type', 'application/octet-stream');//修改---del
             this.ctx.body = fs.createReadStream(filePath);
         } catch (err) {
             this.ctx.set('Content-Type', 'text/json');
@@ -30,13 +30,10 @@ class ResourcesController extends Controller {
             }
         }
     }
-    async update(){
+    async create(){
         const { ctx, app } = this;
-        try { 
-            ctx.helper.toNumber(ctx.params);
-            ctx.validate(this.uploadRule,ctx.params)            
-            ctx.helper.xssFilter(ctx.params);
-            ctx.body=await ctx.service.file.upLoadImg(ctx.params.id);
+        try {
+            ctx.body=await ctx.service.file.upLoadImg();
         } catch (err) {
             console.log(err);
             

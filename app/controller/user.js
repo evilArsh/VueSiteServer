@@ -4,22 +4,74 @@ class UserController extends Controller {
     constructor(ctx) {
         super(ctx);
         this.userInfoRule = {
-            id:{type:'number',required:true}
+            id: { type: 'number', required: true }
         }
         this.updateRule = {
-            userNickName:{type:'string',required:false}
+            userNickName: { type: 'string', required: false }
+        }
+        this.loginRule = {
+            userPassword: 'string',
+            userMail: 'string',
+            accessToken: { type: 'string', required: false }
+        }
+        this.createRule = {
+            userPassword: 'string',
+            userMail: 'string'
         }
     }
-    async index() {
-        // const { ctx, app } = this;
-        // ctx.body =await ctx.service.token.demoGetAccessToken();
+    // add a user
+    async register() {
+        const { ctx } = this;
+        try {
+            console.log(ctx.request.body);
+
+            ctx.validate(this.createRule);
+            ctx.helper.verifyMail(ctx.request.body.userMail);
+            ctx.helper.xssFilter(ctx.request.body);
+            ctx.body = await ctx.service.user.register(ctx.request.body);
+        } catch (err) {
+            console.log(err)
+            // 如果参数校验未通过，将会抛出一个 status = 422 的异常
+            if (err.code === 'invalid_param') {
+                ctx.body = ctx.app.errorUserFormate();
+                return;
+            }
+            // 邮箱格式不对
+            if (err === this.app.config.status.ERROR_MAIL_FORMATE) {
+                ctx.body = ctx.app.errorMailFormate();
+                return;
+            }
+            ctx.body = ctx.app.errorUserCreate();
+        }
+    }
+    //登录
+    async login() {
+        const { ctx } = this;
+        try {
+            ctx.validate(this.loginRule);
+            ctx.helper.verifyMail(ctx.request.body.userMail);
+            ctx.helper.xssFilter(ctx.request.body);
+            ctx.body = await ctx.service.user.login(ctx.request.body);
+        } catch (err) {
+            // 如果参数校验未通过，将会抛出一个 status = 422 的异常
+            if (err.code === 'invalid_param') {
+                ctx.body = ctx.app.errorUserFormate();
+                return;
+            }
+            //邮箱格式不对
+            if (err === this.app.config.status.ERROR_MAIL_FORMATE) {
+                ctx.body = ctx.app.errorMailFormate();
+                return;
+            }
+            ctx.body = ctx.app.errorUserLogin();
+        }
     }
     //个人数据
-    async show() {
+    async getUser() {
         const { ctx, app } = this;
         try {
             ctx.helper.toNumber(ctx.params);
-            ctx.validate(this.userInfoRule,ctx.params);
+            ctx.validate(this.userInfoRule, ctx.params);
             ctx.helper.xssFilter(ctx.params);
             ctx.body = await ctx.service.user.getOwnInfo(ctx.params.id);
         } catch (err) {
@@ -27,34 +79,26 @@ class UserController extends Controller {
         }
     }
     //注销登录
-    async destroy(){
-        const{ctx}=this;
-        try{
-            ctx.helper.toNumber(ctx.params);
-            ctx.validate(this.userInfoRule,ctx.params);
-            ctx.helper.xssFilter(ctx.params);
-            ctx.body=await ctx.service.user.loginOut(ctx.params.id);
-        }catch(err){
+    async loginOut() {
+        const { ctx } = this;
+        try {
+            ctx.body = await ctx.service.user.loginOut();
+        } catch (err) {
+            console.log(err);
+            
             ctx.body = ctx.app.errorUserLoginOut();
         }
     }
     //修改资料
-    async update(){
-        const{ctx}=this;
-        try{
-            ctx.helper.toNumber(ctx.params);
+    async updateInfo() {
+        const { ctx } = this;
+        try {
             ctx.validate(this.updateRule);
-            ctx.validate(this.userInfoRule,ctx.params);
-            ctx.helper.xssFilter(ctx.params);
             ctx.helper.xssFilter(ctx.request.body);
-            ctx.body=await ctx.service.user.updateUser(ctx.params.id,ctx.request.body);
-        }catch(err){
+            ctx.body = await ctx.service.user.updateUser(ctx.request.body);
+        } catch (err) {
             ctx.body = ctx.app.errorUserUpdate();
         }
     }
 }
-// async edit() {}
-// change user's information
-// async update() {}
-// async destroy() {}
 module.exports = UserController;

@@ -6,8 +6,6 @@ module.exports = appInfo => {
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1516894626558_8938';
 
-  // add your config here
-  config.middleware = [];
   // request body size
   config.bodyParser = {
     jsonLimit: '10mb',
@@ -18,12 +16,14 @@ module.exports = appInfo => {
     //{string|Array} allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH'
     credentials: true
   };
-  config.middleware=['log'];
+  config.middleware = ['log','identify'];
+  config.identify={
+    ignore:/api\/sign\S{1,}/
+  }
   //日志
-  config.logger={
-
+  config.logger = {
+    consoleLevel: 'ERROR',
   };
-  config.TOKEN='cjxk';
   // JSONP CSRF验证
   config.jsonp = {
     csrf: true,
@@ -40,7 +40,7 @@ module.exports = appInfo => {
     fileSize: '5mb',
     whitelist: [
       '.jpg', '.jpeg',
-      '.png', 
+      '.png',
       '.gif',
       '.bmp',
       '.wbmp',

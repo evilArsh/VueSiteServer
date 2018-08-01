@@ -8,32 +8,25 @@ class FileService extends Service {
     constructor(ctx) {
         super(ctx);
     }
-    async upLoadImg(id) {
+    async upLoadImg() {
         const {
             ctx,
             app
         } = this;
-        id = parseInt(id);
         try {
-            let usable = await ctx.service.token.isTokenUsable();
-            if (usable) {
-                let idT = await ctx.service.user.getUserIDByToken();
-                if (idT.package.userID === id) {
-                    let uri=await this._upLoadImg();
-                    const result=await app.mysql.update('user_verify',{
-                        url:uri
-                    },{
-                        where:{
-                            userID:id
-                        }
-                    });
-                    if(result.affectedRows===1){
-                        return ctx.app.successUserAvatar(uri);
+            let idT = await ctx.service.user.getUserIDByToken();
+            let url = await this._upLoadImg();
+            const result = await app.mysql.update('user_verify', {
+                url: url
+            }, {
+                    where: {
+                        userID: idT.package.userID
                     }
-                }
+                });
+            if (result.affectedRows === 1) {
+                return ctx.app.successUserAvatar(url);
             }
             return ctx.app.errorUserAvatar();
-
         } catch (err) {
             throw err;
         }

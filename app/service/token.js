@@ -82,13 +82,13 @@ class TokenService extends Service {
             signed: true
         });
     }
-    async destroyAccessToken(id) {
+    async destroyAccessToken() {
         //使一个token失效(手动延时),设置延迟标志
         const {
-            app
+            app,
+            ctx
         } = this;
-        let token = this.getAccessToken();
-        // console.log('token',token);
+        let idT = await ctx.service.user.getUserIDByToken();
         
         let time = new Date().getTime() - (app.config.tokenDelay) * 2;
         try {
@@ -97,7 +97,7 @@ class TokenService extends Service {
                 userUpdateAt: time
             }, {
                     where: {
-                        userID: id
+                        userID: idT.package.userID
                     }
                 });
             return result.affectedRows === 1;
@@ -122,14 +122,14 @@ class TokenService extends Service {
     }
  
     //测试用
-    async demoGetAccessToken() {
+    async demoMethod() {
         const {
             app,
             ctx
         } = this;
         return await app.mysql.select('user_verify', {
             where: {
-                userID: 10010
+                userID: 10013
             }
         });
     }

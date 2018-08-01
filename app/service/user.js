@@ -102,22 +102,15 @@ class UserService extends Service {
         }
     }
     //注销
-    async loginOut(id) {
+    async loginOut() {
         //只对在有效期内的token进行注销
         const {
             ctx,
             app
         } = this;
         try {
-            id=parseInt(id);
-            let usable = await ctx.service.token.isTokenUsable();
-            if (usable) {
-                let idT = await this.getUserIDByToken();
-                if (idT.package.userID === id) {
-                    let isDead = await ctx.service.token.destroyAccessToken(id);
-                    if (isDead) return ctx.app.successUserLoginOut();
-                }
-            }
+            let isDead = await ctx.service.token.destroyAccessToken();
+            if (isDead) return ctx.app.successUserLoginOut();
             return ctx.app.errorUserLoginOut();
         } catch (err) {
             throw err;
@@ -129,7 +122,7 @@ class UserService extends Service {
             app
         } = this;
         try {
-            id=parseInt(id);
+            id = parseInt(id);
             let sql = `SELECT userID,userNickName,url from user_verify where userID=${id}`;
             const result = await app.mysql.query(sql);
             return ctx.app.successUserInfo(result);
@@ -137,28 +130,22 @@ class UserService extends Service {
             throw err;
         }
     }
-    async updateUser(id, data) {
+    async updateUser(data) {
         const {
             ctx,
             app
         } = this;
-        id=parseInt(id);
         try {
-            let usable = await ctx.service.token.isTokenUsable();
-            if (usable) {
-                let idT = await this.getUserIDByToken();
-                if (idT.package.userID === id) {
-                    const result=await app.mysql.update('user_verify',{
-                        userNickName:data.userNickName
-                    },{
-                        where:{
-                            userID:id
-                        }
-                    });
-                    if(result.affectedRows===1){
-                        return ctx.app.successUserUpdate();
+            let idT = await this.getUserIDByToken();
+            const result = await app.mysql.update('user_verify', {
+                userNickName: data.userNickName
+            }, {
+                    where: {
+                        userID: idT.package.userID
                     }
-                }
+                });
+            if (result.affectedRows === 1) {
+                return ctx.app.successUserUpdate();
             }
             return ctx.app.errorUserUpdate();
         } catch (err) {
@@ -174,7 +161,7 @@ class UserService extends Service {
         const token = await ctx.service.token.getAccessToken();
         try {
             let result = await app.mysql.select('user_verify', {
-                columns: ['userNickName', 'url', 'userMail', 'userID','userIsAdmin'],
+                columns: ['userNickName', 'url', 'userMail', 'userID', 'userIsAdmin'],
                 where: {
                     userAccessToken: token
                 }

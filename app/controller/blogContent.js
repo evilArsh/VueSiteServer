@@ -10,9 +10,6 @@ class BlogContentController extends Controller {
             describe:{type:'string',required:false},
             img:{type:'string',required:false,allowEmpty:true}
         };
-        this.deleteRule = {
-            blogID: { type: 'number', required: true }
-        };
         this.idRule={
             id:{type:'number',required:true}
         };
@@ -53,9 +50,8 @@ class BlogContentController extends Controller {
     async create() {
         const { ctx } = this;
         try {
-            ctx.helper.toNumber(ctx.query);
             ctx.validate(this.createRule);
-            ctx.body = await ctx.service.blogContent.createBlogContent(ctx.query.id,ctx.request.body);
+            ctx.body = await ctx.service.blogContent.createBlogContent(ctx.request.body);
         } catch (err) {
             console.log(err);
             
@@ -71,9 +67,8 @@ class BlogContentController extends Controller {
     async destroy() {
         const { ctx } = this;
         try {
-            ctx.validate(this.deleteRule);
+            ctx.helper.toNumber(ctx.params);
             ctx.validate(this.idRule,this.params)
-            ctx.helper.xssFilter(ctx.params);
             ctx.body = await ctx.service.blogContent.delBlogContent(ctx.params.id);
         } catch (err) {
             //参数验证失败
@@ -89,9 +84,7 @@ class BlogContentController extends Controller {
     async update() {
         const { ctx } = this;
         try {
-            ctx.validate(this.createRule);
-            ctx.validate(this.idRule,this.params)            
-            ctx.helper.xssFilter(ctx.params);
+            ctx.validate(this.idRule,this.params);
             ctx.helper.xssFilter(ctx.request.body);
             ctx.body = await ctx.service.blogContent.updateBlogContent(ctx.params.id,ctx.request.body);
         } catch (err) {
