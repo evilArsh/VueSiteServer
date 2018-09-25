@@ -13,9 +13,9 @@ exports.md5 = {
   enable: true,
   path: path.join(__dirname, '../lib/plugin/egg-md5'),
 };
-exports.cors={
-    enable:true,
-    package:'egg-cors'
-}
+// exports.cors={
+//     enable:false,
+//     package:'egg-cors'
+// }
 // had enabled by egg
 // exports.static = true;

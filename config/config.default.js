@@ -11,22 +11,22 @@ module.exports = appInfo => {
     jsonLimit: '10mb',
     formLimit: '10mb',
   };
-  config.cors = {
-    //{string|Function} origin: '*',
-    //{string|Array} allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH'
-    credentials: true
-  };
+  // config.cors = {
+  //   //{string|Function} origin: '*',
+  //   //{string|Array} allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH'
+  //   credentials: true
+  // };
   config.middleware = ['log', 'identify'];
   config.identify = {
     ignore: /api\/sign\S{1,}/
   }
   //日志
   config.logger = {
-    consoleLevel: 'ERROR',
+    // consoleLevel: 'ERROR',
   };
   // JSONP CSRF验证
   config.jsonp = {
-    csrf: true,
+    csrf: false,
   };
   //token失效标志
   config.tokenFlag = "unavailable";
