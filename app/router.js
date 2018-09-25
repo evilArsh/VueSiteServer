@@ -7,7 +7,7 @@ module.exports = app => {
     const { router, controller } = app; 
     //---核心组件
     router.post('/api/signIn',controller.user.login);
-    router.post('/api/signUp',controller.user.register);
+    //router.post('/api/signUp',controller.user.register);
     router.get('/api/user/:id',controller.user.getUser);
     router.delete('/api/user',controller.user.loginOut);
     router.put('/api/user',controller.user.updateInfo);

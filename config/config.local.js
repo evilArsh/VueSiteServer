@@ -29,6 +29,9 @@ module.exports = appInfo => {
             ignoreJSON: false
         },
         domainWhiteList: ['http://localhost:8080', 'http://localhost', 'http://localhost:80', 'http://127.0.0.1']
+        // domainWhiteList:/^https?:\/\/[\w+]/
     };
+    config.cors={
+    }
     return config;
 }
