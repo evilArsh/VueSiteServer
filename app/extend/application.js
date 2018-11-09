@@ -1,5 +1,16 @@
 'use strict';
 module.exports = {
+    msg(success,data,pkg){
+        let res= {
+            success:success,
+            data:data
+        }
+        if(typeof pkg==='undefined'){
+            return res;
+        }
+        res.package=pkg;
+        return res;
+    },
     successUserLogin(info) {
         return {
             success: true,

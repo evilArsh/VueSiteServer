@@ -8,7 +8,7 @@ class DemoController extends Controller {
     async index() {
         try {
             const { ctx, app } = this;
-            ctx.body = "demo 方法执行";
+            ctx.body = ctx.service.user.getOwnInfo(10013)
         } catch (err) {
             console.log(err);
         }

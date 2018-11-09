@@ -7,38 +7,46 @@ class ResourcesController extends Controller {
     constructor(ctx) {
         super(ctx);
         this.uploadRule = {
-            id: { type: 'number', required: true }
+            accessToken: { type: 'string', required: true }
         }
     }
     //视频流
+    //考虑人为修改 Range头后的处理
     video(filePath, type) {
         const { ctx, app } = this;
 
         if (!(/video/.test(type))) {
             return;
         }
-        // console.log(ctx.get('range'));
-
+        //1mb/s 默认发送 1048576
         let fileSize = fs.statSync(filePath).size;
-        let start = ctx.get('range').substr(ctx.get('range').indexOf('=') + 1, ctx.get('range').indexOf('-') - 1),
-            end = ctx.get('range').substr(ctx.get('range').indexOf('-') + 1) || fileSize;
-        start = parseInt(start);
-        end = parseInt(end);
-        // console.log('start',start);
-        // console.log('end',end);
+            let start = ctx.get('range').substr(ctx.get('range').indexOf('=') + 1, ctx.get('range').indexOf('-') - 1),
+                end = ctx.get('range').substr(ctx.get('range').indexOf('-') + 1);
+            start = parseInt(start);
+            end = parseInt(end);
 
-        let header = {
-            'Accept-Ranges': 'bytes',
-            'Content-Type': type,
-            'Content-Length': end - start + 1,
-            'Content-Range': 'bytes ' + start + '-' + end + '/' + fileSize
-        };
-        this.ctx.set(header);
-        // this.ctx.status=206;
-        this.ctx.body = fs.createReadStream(filePath, {
-            'satrt': start,
-            'end': end
-        });
+            if (isNaN(start)) {
+                start=0;
+            }
+            if (isNaN(end)) {
+                end = fileSize - 1;
+            }
+            ctx.status = 206;
+            let header = {
+                'Accept-Ranges': 'bytes',
+                'Content-Type': type,
+                'Content-Length': end - start + 1,
+                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                "cache-control":'public,max-age=31536000'
+            };
+            ctx.set(header);
+
+            ctx.body = fs.createReadStream(filePath, {
+                start: start,
+                end: end,
+                autoClose:true
+            });
+        // }
     }
     //文档下载
     doc(filePath, type) {
@@ -47,13 +55,13 @@ class ResourcesController extends Controller {
         if (/video/.test(type) || /image/.test(type)) {
             return;
         }
-        this.ctx.attachment(uri);
+        ctx.attachment(uri);
 
         let header = {
             'Content-Type': type
         };
-        this.ctx.set(header);
-        this.ctx.body = fs.createReadStream(filePath);
+        ctx.set(header);
+        ctx.body = fs.createReadStream(filePath);
     }
     img(filePath, type) {
         const { ctx, app } = this;
@@ -69,8 +77,8 @@ class ResourcesController extends Controller {
             'Accept-Ranges': 'bytes',
             'Content-Length': parseInt(fs.statSync(filePath).size)
         };
-        this.ctx.set(header);
-        this.ctx.body = fs.createReadStream(filePath);
+        ctx.set(header);
+        ctx.body = fs.createReadStream(filePath);
     }
     async show() {
         // this.app.config.static.dir
@@ -88,7 +96,7 @@ class ResourcesController extends Controller {
                 type = 'application/octet-stream';
             }
             fs.accessSync(filePath, fs.constants.R_OK | fs.constants.W_OK);
-            // this.ctx.attachment(uri);
+            // ctx.attachment(uri);
             this.video(filePath, type);
             this.doc(filePath, type);
             this.img(filePath, type);
@@ -96,20 +104,30 @@ class ResourcesController extends Controller {
         } catch (err) {
             console.log(err);
 
-            this.ctx.set('Content-Type', 'text/json');
-            this.ctx.body = {
+            ctx.set('Content-Type', 'text/json');
+            ctx.body = {
                 success: 'false',
                 data: '不存在此资源'
             }
         }
     }
-    async create() {
+    //html
+    // async create() {
+    //     const { ctx, app } = this;
+    //     try {
+    //         ctx.validate(this.uploadRule, ctx.params)
+    //         ctx.body = await ctx.service.file.upLoadImg(ctx.params.accessToken);
+    //     } catch (err) {
+    //         console.log(err);
+    //         ctx.body = ctx.app.errorUserAvatar();
+    //     }
+    // }
+    //mobile
+        async create() {
         const { ctx, app } = this;
         try {
-            ctx.body = await ctx.service.file.upLoadImg();
+            ctx.body = await ctx.service.file.upLoadImgMobile();
         } catch (err) {
-            console.log(err);
-
             ctx.body = ctx.app.errorUserAvatar();
         }
     }
