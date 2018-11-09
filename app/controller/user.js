@@ -6,14 +6,17 @@ class UserController extends Controller {
         this.userInfoRule = {
             id: { type: 'number', required: true }
         }
-        this.updateRule = {
-            userNickName: { type: 'string', required: false },
+        this.tokenRule={
             accessToken: { type: 'string', required: true }
+        }
+        this.updateRule = {
+            //其它字段待增加
+            userNickName: { type: 'string', required: true }
         }
         this.loginRule = {
             userPassword: 'string',
-            userMail: 'string',
-            accessToken: { type: 'string', required: false }
+            userMail: 'string'
+            // accessToken: { type: 'string', required: false }
         }
         this.loginOutRule={
             accessToken: { type: 'string', required: true }
@@ -90,8 +93,8 @@ class UserController extends Controller {
     async loginOut() {
         const { ctx } = this;
         try {
-            ctx.validate(this.loginOutRule);
-            ctx.body = await ctx.service.user.loginOut(ctx.request.body.accessToken);
+            ctx.validate(this.tokenRule,ctx.query);
+            ctx.body = await ctx.service.user.loginOut();
         } catch (err) {
             // console.log(err);
             ctx.body = ctx.app.errorUserLoginOut();
@@ -101,6 +104,7 @@ class UserController extends Controller {
     async updateInfo() {
         const { ctx } = this;
         try {
+            ctx.validate(this.tokenRule,ctx.query);
             ctx.validate(this.updateRule);
             ctx.helper.xssFilter(ctx.request.body);
             ctx.body = await ctx.service.user.updateUser(ctx.request.body);

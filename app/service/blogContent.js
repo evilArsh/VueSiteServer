@@ -37,7 +37,7 @@ class BlogContentService extends Service {
     async createBlogContent(data) {
         const { ctx, app } = this;
         try {
-            let userIDR = await ctx.service.user.getUserIDByToken();
+            let userIDR = await ctx.service.user.getUserIDByToken(ctx.service.token.getAccessToken());
             const result = await app.mysql.insert('user_blog', {
                 userID: userIDR.package.userID,
                 blog_title: ctx.helper.xssFilter(data.title),
@@ -63,7 +63,7 @@ class BlogContentService extends Service {
         const { ctx, app } = this;
         id = parseInt(id);
         try {
-            let userIDR = await ctx.service.user.getUserIDByToken();
+            let userIDR = await ctx.service.user.getUserIDByToken(ctx.service.token.getAccessToken());
             const result = await app.mysql.delete('user_blog', {
                 where: {
                     userID: userIDR.package.userID,

@@ -20,29 +20,6 @@ class FileService extends Service {
             throw err;
         }
     }
-    async upLoadImg(token) {
-        const {
-            ctx,
-            app
-        } = this;
-        try {
-            let idT = await ctx.service.user.getUserIDByToken(token);
-            let url = await this._upLoadImg();
-            const result = await app.mysql.update('user_verify', {
-                url: url
-            }, {
-                    where: {
-                        userID: idT.package.userID
-                    }
-                });
-            if (result.affectedRows === 1) {
-                return ctx.app.successUserAvatar(url);
-            }
-            return ctx.app.errorUserAvatar();
-        } catch (err) {
-            throw err;
-        }
-    }
     async _upLoadImg() {
         const {
             ctx,

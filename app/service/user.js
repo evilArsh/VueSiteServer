@@ -104,14 +104,14 @@ class UserService extends Service {
         }
     }
     //注销
-    async loginOut(token) {
+    async loginOut() {
         //只对在有效期内的token进行注销
         const {
             ctx,
             app
         } = this;
         try {
-            let isDead = await ctx.service.token.destroyAccessToken(token);
+            let isDead = await ctx.service.token.destroyAccessToken(ctx.service.token.getAccessToken());
             if (isDead) return ctx.app.successUserLoginOut();
             return ctx.app.errorUserLoginOut();
         } catch (err) {
@@ -139,9 +139,10 @@ class UserService extends Service {
             app
         } = this;
         try {
-            let idT = await this.getUserIDByToken(data.accessToken);
+            let idT = await this.getUserIDByToken(ctx.service.token.getAccessToken());
             const result = await app.mysql.update('user_verify', {
-                userNickName: data.userNickName
+                userNickName: data.userNickName,
+                url: data.url
             }, {
                     where: {
                         userID: idT.package.userID

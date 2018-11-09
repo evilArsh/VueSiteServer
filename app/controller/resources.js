@@ -6,19 +6,19 @@ const Controller = require('egg').Controller;
 class ResourcesController extends Controller {
     constructor(ctx) {
         super(ctx);
-        this.uploadRule = {
-            accessToken: { type: 'string', required: true }
+        this.tokenRule={
+            accessToken:{type:'string',required:true}
         }
     }
     //视频流
     //考虑人为修改 Range头后的处理
+    //end 和 s
     video(filePath, type) {
         const { ctx, app } = this;
 
         if (!(/video/.test(type))) {
             return;
         }
-        //1mb/s 默认发送 1048576
         let fileSize = fs.statSync(filePath).size;
             let start = ctx.get('range').substr(ctx.get('range').indexOf('=') + 1, ctx.get('range').indexOf('-') - 1),
                 end = ctx.get('range').substr(ctx.get('range').indexOf('-') + 1);
@@ -111,23 +111,14 @@ class ResourcesController extends Controller {
             }
         }
     }
-    //html
-    // async create() {
-    //     const { ctx, app } = this;
-    //     try {
-    //         ctx.validate(this.uploadRule, ctx.params)
-    //         ctx.body = await ctx.service.file.upLoadImg(ctx.params.accessToken);
-    //     } catch (err) {
-    //         console.log(err);
-    //         ctx.body = ctx.app.errorUserAvatar();
-    //     }
-    // }
     //mobile
         async create() {
         const { ctx, app } = this;
         try {
+            ctx.validate(this.tokenRule,ctx.query);
             ctx.body = await ctx.service.file.upLoadImgMobile();
         } catch (err) {
+            console.log(err)
             ctx.body = ctx.app.errorUserAvatar();
         }
     }

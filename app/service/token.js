@@ -66,14 +66,10 @@ class TokenService extends Service {
         }
     }
     getAccessToken() {
-        // const {
-        //     ctx
-        // } = this;
-        // return ctx.cookies.get('accessToken', {
-        //     httpOnly: true,
-        //     encrypt: true,
-        //     signed: true
-        // });
+        const {
+            ctx
+        } = this;
+        return ctx.query.accessToken||"";
     }
     async destroyAccessToken(token) {
         //使一个token失效(手动延时),设置延迟标志
