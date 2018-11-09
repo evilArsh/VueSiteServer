@@ -71,7 +71,7 @@ module.exports = {
         if (isNaN(parseInt(old)) || isNaN(parseInt(news))) {
             return false;
         }
-        return news - old >= this.app.config.tokenDelay ? true : false;
+        return Math.abs(news - old) >= this.app.config.tokenDelay ? true : false;
     },
     //对请求部分数据时body中所带的参数进行处理
     reqParamSet(queryAndNumber) {

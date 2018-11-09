@@ -27,13 +27,16 @@ class TokenService extends Service {
     }
     //内部函数
     async _isTokenUsable(token) {
+        const {
+            app,
+            ctx
+        } = this;
         try {
-            const {
-                app,
-                ctx
-            } = this;
             //突发状况
-            if(token===app.config.tokenFlag){
+            if (token === app.config.tokenFlag) {
+                return false;
+            }
+            if(!token.length){
                 return false;
             }
             let info = await app.mysql.select('user_verify', {
@@ -56,44 +59,34 @@ class TokenService extends Service {
     //外部通用调用
     async isTokenUsable(_token) {
         try {
-            let token;
-            if (_token) { token = _token; } else {
-                token = this.getAccessToken();
-            }
-            if (token !== undefined) {
-                let isUsable = await this._isTokenUsable(token);
-                if (!isUsable) {
-                    return false;
-                }
-                return true;
-            }
-            return false;
+            let isUsable = await this._isTokenUsable(_token);
+            return isUsable;
         } catch (err) {
             throw err;
         }
     }
     getAccessToken() {
-        const {
-            ctx
-        } = this;
-        return ctx.cookies.get('accessToken', {
-            httpOnly: true,
-            encrypt: true,
-            signed: true
-        });
+        // const {
+        //     ctx
+        // } = this;
+        // return ctx.cookies.get('accessToken', {
+        //     httpOnly: true,
+        //     encrypt: true,
+        //     signed: true
+        // });
     }
-    async destroyAccessToken() {
+    async destroyAccessToken(token) {
         //使一个token失效(手动延时),设置延迟标志
         const {
             app,
             ctx
         } = this;
-        let idT = await ctx.service.user.getUserIDByToken();
-        
+        let idT = await ctx.service.user.getUserIDByToken(token);
+
         let time = new Date().getTime() - (app.config.tokenDelay) * 2;
         try {
             let result = await app.mysql.update('user_verify', {
-                userAccessToken:app.config.tokenFlag,
+                userAccessToken: app.config.tokenFlag,
                 userUpdateAt: time
             }, {
                     where: {
@@ -111,16 +104,12 @@ class TokenService extends Service {
         } = this;
         try {
             const _token = await this.updateAccessToken(valueID, key)
-            ctx.cookies.set('accessToken', _token, {
-                httpOnly: true,
-                encrypt: true,
-                signed: true
-            });
+            return _token;
         } catch (err) {
             throw err;
         }
     }
- 
+
     //测试用
     async demoMethod() {
         const {

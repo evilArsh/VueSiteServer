@@ -39,9 +39,11 @@ class UserService extends Service {
                 userPassword: data.userPassword,
                 userCreateAt: time,
                 userUpdateAt: timeO.getTime(),
-                userNickName: '未设置昵称',
+                userNickName: data.userNickName,
                 userIsAdmin: 'N',
-                userPhone: data.userPhone
+                userIsTeacher:data.userIsTeacher,
+                userCollege:data.userCollege,
+                userInstitution:data.userInstitution,
             });
             if (results.affectedRows === 1) {
                 result = ctx.app.successUserCreate();
@@ -63,35 +65,35 @@ class UserService extends Service {
         //数据库返回的结果
         let results = {};
         try {
-            const token = ctx.service.token.getAccessToken();
             // the select function returns  an array like this [{},{}]
             results = await app.mysql.select('user_verify', {
                 where: {
                     userMail: data.userMail,
                     userPassword: data.userPassword
                 },
-                columns: ['userID', 'userMail', 'userPassword', 'userAccessToken', 'userNickName', 'url']
+                columns: ['userID','userCollege', 'userMail', 'userInstitution','userPassword', 'userAccessToken', 'userNickName', 'url']
             });
             // 用户名或密码错误
             // 加个Logger
             if (results.length !== 1) {
                 result = ctx.app.errorUserLogin();
             } else {
-                if (token !== undefined && token === results[0].userAccessToken) {
-                    let q = await ctx.service.token.isTokenUsable(results[0].userAccessToken);
-                    if (q) {
-                        return ctx.app.errorUserReLogin();
-                    }
-                }
-                ctx.rotateCsrfSecret();
+                // let q = await ctx.service.token.isTokenUsable(results[0].userAccessToken);
+                // if (q) {
+                //     return ctx.app.errorUserReLogin();
+                // }
                 //origional 
-                await ctx.service.token.setAccessToken(results[0].userID, new Date().getTime());
+                // await ctx.service.token.setAccessToken(results[0].userID, new Date().getTime());
                 let info = {
                     userID: results[0].userID,
                     userMail: results[0].userMail,
                     userNickName: results[0].userNickName,
-                    url: results[0].url
+                    url: results[0].url,
+                    userCollege:results[0].userCollege,
+                    userInstitution:results[0].userInstitution,
+                    accessToken: await ctx.service.token.setAccessToken(results[0].userID, new Date().getTime())
                 }
+                console.log(JSON.stringify(info))
                 result = ctx.app.successUserLogin(info);
                 //origional 
                 // result = ctx.app.successUserLogin(info[0]);
@@ -102,14 +104,14 @@ class UserService extends Service {
         }
     }
     //注销
-    async loginOut() {
+    async loginOut(token) {
         //只对在有效期内的token进行注销
         const {
             ctx,
             app
         } = this;
         try {
-            let isDead = await ctx.service.token.destroyAccessToken();
+            let isDead = await ctx.service.token.destroyAccessToken(token);
             if (isDead) return ctx.app.successUserLoginOut();
             return ctx.app.errorUserLoginOut();
         } catch (err) {
@@ -125,7 +127,8 @@ class UserService extends Service {
             id = parseInt(id);
             let sql = `SELECT userID,userNickName,url from user_verify where userID=${id}`;
             const result = await app.mysql.query(sql);
-            return ctx.app.successUserInfo(result);
+            //[]
+            return ctx.app.successUserInfo(result[0]);
         } catch (err) {
             throw err;
         }
@@ -136,7 +139,7 @@ class UserService extends Service {
             app
         } = this;
         try {
-            let idT = await this.getUserIDByToken();
+            let idT = await this.getUserIDByToken(data.accessToken);
             const result = await app.mysql.update('user_verify', {
                 userNickName: data.userNickName
             }, {
@@ -153,15 +156,14 @@ class UserService extends Service {
         }
     }
     //++++++
-    async getUserInfoByToken() {
+    async getUserInfoByToken(token) {
         const {
             ctx,
             app
         } = this;
-        const token = await ctx.service.token.getAccessToken();
         try {
             let result = await app.mysql.select('user_verify', {
-                columns: ['userNickName', 'url', 'userMail', 'userID', 'userIsAdmin'],
+                columns: ['userNickName', 'url', 'userMail', 'userID', 'userIsTeacher','userInstitution','userCollege'],
                 where: {
                     userAccessToken: token
                 }
@@ -176,12 +178,11 @@ class UserService extends Service {
     }
     //++++++
     //
-    async getUserIDByToken() {
+    async getUserIDByToken(token) {
         const {
             ctx,
             app
         } = this;
-        const token = await ctx.service.token.getAccessToken();
         try {
             let result = await app.mysql.select('user_verify', {
                 columns: ['userID'],

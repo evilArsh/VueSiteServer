@@ -8,13 +8,25 @@ class FileService extends Service {
     constructor(ctx) {
         super(ctx);
     }
-    async upLoadImg() {
+    async upLoadImgMobile() {
         const {
             ctx,
             app
         } = this;
         try {
-            let idT = await ctx.service.user.getUserIDByToken();
+            let url = await this._upLoadImg();
+            return ctx.app.successUserAvatar({uri:url.toString()});
+        } catch (err) {
+            throw err;
+        }
+    }
+    async upLoadImg(token) {
+        const {
+            ctx,
+            app
+        } = this;
+        try {
+            let idT = await ctx.service.user.getUserIDByToken(token);
             let url = await this._upLoadImg();
             const result = await app.mysql.update('user_verify', {
                 url: url
@@ -36,14 +48,14 @@ class FileService extends Service {
             ctx,
             app
         } = this;
-        let URI = '';
+        let URI = [];
         const parts = ctx.multipart({ autoFields: true });
         let part;
         try {
             while ((part = await parts()) !== null) {
                 if (typeof part === 'object' && 'undefined' !== typeof part.filename) {
                     const fn = app.md5(part.filename.toLowerCase(), new Date(), false) + part.filename.substr(part.filename.lastIndexOf('.'));
-                    URI = path.join('/', fn);
+                    URI.push(path.join('/', fn));
                     const target = path.join(this.config.baseDir, app.config.sourceDir, fn);
                     const writeStream = fs.createWriteStream(target);
                     await awaitWriteStream(part.pipe(writeStream));

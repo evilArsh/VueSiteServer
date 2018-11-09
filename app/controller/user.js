@@ -7,16 +7,24 @@ class UserController extends Controller {
             id: { type: 'number', required: true }
         }
         this.updateRule = {
-            userNickName: { type: 'string', required: false }
+            userNickName: { type: 'string', required: false },
+            accessToken: { type: 'string', required: true }
         }
         this.loginRule = {
             userPassword: 'string',
             userMail: 'string',
             accessToken: { type: 'string', required: false }
         }
+        this.loginOutRule={
+            accessToken: { type: 'string', required: true }
+        }
         this.createRule = {
-            userPassword: 'string',
-            userMail: 'string'
+            userPassword: { type: 'string', required: true },
+            userMail: { type: 'string', required: true },
+            userCollege:{ type: 'string', required: true },
+            userInstitution:{ type: 'string', required: true },
+            userNickName:{ type: 'string', required: true },
+            userIsTeacher:{ type: 'string', required: true }
         }
     }
     // add a user
@@ -82,10 +90,10 @@ class UserController extends Controller {
     async loginOut() {
         const { ctx } = this;
         try {
-            ctx.body = await ctx.service.user.loginOut();
+            ctx.validate(this.loginOutRule);
+            ctx.body = await ctx.service.user.loginOut(ctx.request.body.accessToken);
         } catch (err) {
-            console.log(err);
-            
+            // console.log(err);
             ctx.body = ctx.app.errorUserLoginOut();
         }
     }

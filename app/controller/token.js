@@ -7,12 +7,14 @@ class TokenController extends Controller{
             accessToken:{type:'string',require:true}
         }
     }
+    // /api/token?accessToken=
     async index(){
         const{ctx}=this;
         try{
-            let isToken = await ctx.service.token.isTokenUsable();
+            ctx.validate(this.tokenRule,ctx.query);
+            let isToken = await ctx.service.token.isTokenUsable(ctx.query.accessToken);
             if(isToken){
-                ctx.body = await ctx.service.user.getUserInfoByToken();    
+                ctx.body = await ctx.service.user.getUserInfoByToken(ctx.query.accessToken);    
             }else{
                 ctx.body = ctx.app.errorTokenVerify();    
             }
