@@ -16,40 +16,41 @@ class ResourcesController extends Controller {
     video(filePath, type) {
         const { ctx, app } = this;
 
-        if (!(/video/.test(type))) {
+        if (!(/audio|video/.test(type))) {
             return;
         }
         let fileSize = fs.statSync(filePath).size;
-            let start = ctx.get('range').substr(ctx.get('range').indexOf('=') + 1, ctx.get('range').indexOf('-') - 1),
-                end = ctx.get('range').substr(ctx.get('range').indexOf('-') + 1);
-            start = parseInt(start);
-            end = parseInt(end);
+        console.log(fileSize)
+        let start = ctx.get('range').substr(ctx.get('range').indexOf('=') + 1, ctx.get('range').indexOf('-') - 1),
+            end = ctx.get('range').substr(ctx.get('range').indexOf('-') + 1);
+        start = parseInt(start);
+        end = parseInt(end);
 
-            if (isNaN(start)) {
-                start=0;
-            }
-            if (isNaN(end)) {
-                end = fileSize - 1;
-            }
-            ctx.status = 206;
-            let header = {
-                'Accept-Ranges': 'bytes',
-                'Content-Type': type,
-                'Content-Length': end - start + 1,
-                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-                "cache-control":'public,max-age=31536000'
-            };
-            ctx.set(header);
+        if (isNaN(start)) {
+            start = 0;
+        }
+        if (isNaN(end)) {
+            end = fileSize - 1;
+        }
+        ctx.status = 206;
+        let header = {
+            'Accept-Ranges': 'bytes',
+            'Content-Type': type,
+            'Content-Length': end - start + 1,
+            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+            "cache-control": 'public,max-age=31536000'
+        };
+        ctx.set(header);
 
-            ctx.body = fs.createReadStream(filePath, {
-                start: start,
-                end: end,
-                autoClose:true
-            });
+        ctx.body = fs.createReadStream(filePath, {
+            start: start,
+            end: end,
+            autoClose: true
+        });
         // }
     }
     //文档下载
-    doc(filePath, type) {
+    doc(filePath, type,uri) {
         const { ctx, app } = this;
 
         if (/video/.test(type) || /image/.test(type)) {
@@ -119,7 +120,8 @@ class ResourcesController extends Controller {
             ctx.body = await ctx.service.file.upLoadImgMobile();
         } catch (err) {
             console.log(err)
-            ctx.body = ctx.app.errorUserAvatar();
+            // ctx.body = ctx.app.errorUserAvatar();
+            ctx.body=ctx.helper.msg(false, '上传失败');
         }
     }
 }

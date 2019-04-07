@@ -10,8 +10,10 @@
     "egg-cors": "^2.0.0",
     "egg-mysql": "^3.0.0",
     "egg-scripts": "^2.6.0",
+    "egg-socket.io": "^4.1.5",
     "egg-validate": "^1.0.0",
     "formidable": "^1.2.1",
+    "socket.io": "^2.1.1",
     "stream-wormhole": "^1.0.3"
   },
   "devDependencies": {
@@ -28,9 +30,9 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --port=7001 --daemon",
+    "start": "egg-scripts start --port=7001 --daemon --sticky",
     "stop": "egg-scripts stop",
-    "dev": "egg-bin dev",
+    "dev": "egg-bin dev --sticky",
     "debug": "egg-bin debug",
     "testL": "npm run lint -- --fix",
     "test": "npm run test-local",

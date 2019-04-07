@@ -66,6 +66,7 @@ class UserService extends Service {
         let results = {};
         try {
             // the select function returns  an array like this [{},{}]
+            console.log(data)
             results = await app.mysql.select('user_verify', {
                 where: {
                     userMail: data.userMail,

@@ -8,7 +8,6 @@ class DemoController extends Controller {
     async index() {
         try {
             const { ctx, app } = this;
-            ctx.body = ctx.service.token.getAccessToken();
         } catch (err) {
             console.log(err);
         }

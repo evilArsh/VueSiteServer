@@ -1,0 +1,16 @@
+{
+    "name": "egg-socket-client",
+    "version": "1.0.0",
+    "description": "",
+    "eggPlugin": {
+        "name": "socketpc"
+    },
+    "keywords": [
+        "egg",
+        "egg-plugin",
+        "eggPlugin",
+        "egg-plugin-view",
+        "egg-view",
+        "socketpc"
+    ]
+}

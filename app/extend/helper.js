@@ -95,5 +95,14 @@ module.exports = {
         sha1.update(str,'utf8');
         str = sha1.digest('hex');
         return str;
+    },
+    
+    msg(succ,str,src){
+        let d=src||{};
+        return{
+            success:succ,
+            data:str,
+            package:d
+        }
     }
 };

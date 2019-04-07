@@ -3,13 +3,38 @@
 module.exports = appInfo => {
   const config = exports = {};
 
+  config.io = {
+    init: {}, // passed to engine.io
+    namespace: {
+      '/': {
+        connectionMiddleware: ['connection'],
+        packetMiddleware: ['packet'],
+      },
+      '/algo': {
+        connectionMiddleware: [],
+        packetMiddleware: [],
+      },
+    },
+  };
+  config.socketpc = {
+    client:{
+      host:'localhost',
+      port:'8888',
+      //附加信息
+      query:{
+
+      }
+    },
+    app: true,
+    agent: false
+  };
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1516894626558_8938';
 
   // request body size
   config.bodyParser = {
-    jsonLimit: '10mb',
-    formLimit: '10mb',
+    jsonLimit: '50mb',
+    formLimit: '50mb',
   };
   config.cors = {
     //{string|Function} origin: '*',
@@ -20,10 +45,7 @@ module.exports = appInfo => {
   config.identify = {
     ignore: /api\/sign\S{1,}/
   }
-  //日志
-  config.logger = {
-    consoleLevel: 'ERROR',
-  };
+
   // JSONP CSRF验证
   config.jsonp = {
     csrf: true,
@@ -37,8 +59,9 @@ module.exports = appInfo => {
   //egg-multipart
   config.multipart = {
     // fileExtensions:[]
-    fileSize: '5mb',
+    fileSize: '50mb',
     whitelist: [
+      '.mp3',
       '.jpg', '.jpeg',
       '.png',
       '.gif',
@@ -244,7 +267,7 @@ module.exports = appInfo => {
     ".mp1": "audio/mp1",
     ".mp2": "audio/mp2",
     ".mp2v": "video/mpeg",
-    ".mp3": "audio/mp3",
+    ".mp3": "video/mp4",
     ".mp4": "video/mp4",
     ".mpa": "video/x-mpg",
     ".mpd": "application/vnd.ms-project",
